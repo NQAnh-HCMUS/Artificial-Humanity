@@ -72,26 +72,79 @@ LLM* llm_init(LLMConfig config) {
     
     model->config = config;
     
+    // Initialize all pointers to NULL for safe cleanup on error
+    model->weights.token_embedding = NULL;
+    model->weights.position_embedding = NULL;
+    model->weights.wq = NULL;
+    model->weights.wk = NULL;
+    model->weights.wv = NULL;
+    model->weights.wo = NULL;
+    model->weights.w1 = NULL;
+    model->weights.w2 = NULL;
+    model->weights.ln1_gamma = NULL;
+    model->weights.ln1_beta = NULL;
+    model->weights.ln2_gamma = NULL;
+    model->weights.ln2_beta = NULL;
+    model->weights.output_weights = NULL;
+    model->state.x = NULL;
+    model->state.q = NULL;
+    model->state.k = NULL;
+    model->state.v = NULL;
+    model->state.att = NULL;
+    model->state.att_out = NULL;
+    model->state.ff = NULL;
+    model->state.logits = NULL;
+    
     // Allocate weights (initialized to random small values)
-    srand(time(NULL));
+    // Note: Seed random once at program startup for better behavior
+    static int seeded = 0;
+    if (!seeded) {
+        srand(time(NULL));
+        seeded = 1;
+    }
     
     int d = config.d_model;
     int vocab = config.vocab_size;
     int seq_len = config.max_seq_len;
     
     model->weights.token_embedding = (float*)malloc(vocab * d * sizeof(float));
+    if (!model->weights.token_embedding) goto cleanup;
+    
     model->weights.position_embedding = (float*)malloc(seq_len * d * sizeof(float));
+    if (!model->weights.position_embedding) goto cleanup;
+    
     model->weights.wq = (float*)malloc(d * d * sizeof(float));
+    if (!model->weights.wq) goto cleanup;
+    
     model->weights.wk = (float*)malloc(d * d * sizeof(float));
+    if (!model->weights.wk) goto cleanup;
+    
     model->weights.wv = (float*)malloc(d * d * sizeof(float));
+    if (!model->weights.wv) goto cleanup;
+    
     model->weights.wo = (float*)malloc(d * d * sizeof(float));
+    if (!model->weights.wo) goto cleanup;
+    
     model->weights.w1 = (float*)malloc(d * config.d_ff * sizeof(float));
+    if (!model->weights.w1) goto cleanup;
+    
     model->weights.w2 = (float*)malloc(config.d_ff * d * sizeof(float));
+    if (!model->weights.w2) goto cleanup;
+    
     model->weights.ln1_gamma = (float*)malloc(d * sizeof(float));
+    if (!model->weights.ln1_gamma) goto cleanup;
+    
     model->weights.ln1_beta = (float*)malloc(d * sizeof(float));
+    if (!model->weights.ln1_beta) goto cleanup;
+    
     model->weights.ln2_gamma = (float*)malloc(d * sizeof(float));
+    if (!model->weights.ln2_gamma) goto cleanup;
+    
     model->weights.ln2_beta = (float*)malloc(d * sizeof(float));
+    if (!model->weights.ln2_beta) goto cleanup;
+    
     model->weights.output_weights = (float*)malloc(d * vocab * sizeof(float));
+    if (!model->weights.output_weights) goto cleanup;
     
     // Initialize weights with small random values
     for (int i = 0; i < vocab * d; i++) {
@@ -124,15 +177,35 @@ LLM* llm_init(LLMConfig config) {
     
     // Allocate state buffers
     model->state.x = (float*)malloc(seq_len * d * sizeof(float));
+    if (!model->state.x) goto cleanup;
+    
     model->state.q = (float*)malloc(seq_len * d * sizeof(float));
+    if (!model->state.q) goto cleanup;
+    
     model->state.k = (float*)malloc(seq_len * d * sizeof(float));
+    if (!model->state.k) goto cleanup;
+    
     model->state.v = (float*)malloc(seq_len * d * sizeof(float));
+    if (!model->state.v) goto cleanup;
+    
     model->state.att = (float*)malloc(seq_len * seq_len * sizeof(float));
+    if (!model->state.att) goto cleanup;
+    
     model->state.att_out = (float*)malloc(seq_len * d * sizeof(float));
+    if (!model->state.att_out) goto cleanup;
+    
     model->state.ff = (float*)malloc(seq_len * config.d_ff * sizeof(float));
+    if (!model->state.ff) goto cleanup;
+    
     model->state.logits = (float*)malloc(vocab * sizeof(float));
+    if (!model->state.logits) goto cleanup;
     
     return model;
+
+cleanup:
+    // Free any allocated memory before returning NULL
+    llm_free(model);
+    return NULL;
 }
 
 // Free model
@@ -215,10 +288,17 @@ void llm_forward(LLM* model, int* tokens, int n_tokens, float* output) {
     
     // Output projection
     float* att_proj = (float*)malloc(n_tokens * d * sizeof(float));
+    if (!att_proj) return;  // Early return on allocation failure
+    
     matmul(att_proj, model->state.att_out, model->weights.wo, n_tokens, d, d);
     
     // Residual connection and layer norm
     float* ln1_out = (float*)malloc(n_tokens * d * sizeof(float));
+    if (!ln1_out) {
+        free(att_proj);
+        return;
+    }
+    
     for (int i = 0; i < n_tokens; i++) {
         for (int j = 0; j < d; j++) {
             model->state.x[i * d + j] += att_proj[i * d + j];
@@ -232,6 +312,12 @@ void llm_forward(LLM* model, int* tokens, int n_tokens, float* output) {
     relu(model->state.ff, n_tokens * model->config.d_ff);
     
     float* ff_out = (float*)malloc(n_tokens * d * sizeof(float));
+    if (!ff_out) {
+        free(att_proj);
+        free(ln1_out);
+        return;
+    }
+    
     matmul(ff_out, model->state.ff, model->weights.w2, n_tokens, d, model->config.d_ff);
     
     // Residual connection and layer norm
@@ -281,10 +367,16 @@ int llm_sample(float* logits, int vocab_size) {
 // Generate tokens
 void llm_generate(LLM* model, int* prompt, int prompt_len, int* output, int max_new_tokens) {
     int* context = (int*)malloc((prompt_len + max_new_tokens) * sizeof(int));
+    if (!context) return;  // Early return on allocation failure
+    
     memcpy(context, prompt, prompt_len * sizeof(int));
     
     int context_len = prompt_len;
     float* logits = (float*)malloc(model->config.vocab_size * sizeof(float));
+    if (!logits) {
+        free(context);
+        return;
+    }
     
     for (int i = 0; i < max_new_tokens; i++) {
         // Forward pass
