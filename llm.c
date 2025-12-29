@@ -243,10 +243,20 @@ void llm_forward(LLM* model, int* tokens, int n_tokens, float* output) {
     int d = model->config.d_model;
     int vocab = model->config.vocab_size;
     
+    // Bounds check on n_tokens
+    if (n_tokens > model->config.max_seq_len) {
+        n_tokens = model->config.max_seq_len;
+    }
+    if (n_tokens <= 0) {
+        return;  // Invalid input
+    }
+    
     // Embedding: token + position
     for (int i = 0; i < n_tokens; i++) {
         int token = tokens[i];
-        if (token >= vocab) token = vocab - 1;  // Clamp to vocab size
+        // Clamp token to valid range
+        if (token < 0) token = 0;
+        if (token >= vocab) token = vocab - 1;
         
         for (int j = 0; j < d; j++) {
             model->state.x[i * d + j] = 
@@ -366,6 +376,12 @@ int llm_sample(float* logits, int vocab_size) {
 
 // Generate tokens
 void llm_generate(LLM* model, int* prompt, int prompt_len, int* output, int max_new_tokens) {
+    // Validate inputs
+    if (prompt_len <= 0 || max_new_tokens <= 0) return;
+    if (prompt_len > model->config.max_seq_len) {
+        prompt_len = model->config.max_seq_len;
+    }
+    
     int* context = (int*)malloc((prompt_len + max_new_tokens) * sizeof(int));
     if (!context) return;  // Early return on allocation failure
     
