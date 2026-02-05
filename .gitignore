@@ -53,3 +53,7 @@ dkms.conf
 
 # debug information files
 *.dwo
+.vs/Artificial-Humanity.slnx/v18/DocumentLayout.json
+.gitignore
+.vs/VSWorkspaceState.json
+.vs/Artificial-Humanity.slnx/v18/.wsuo

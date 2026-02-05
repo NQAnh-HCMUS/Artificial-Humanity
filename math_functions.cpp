@@ -85,12 +85,14 @@ std::vector<std::vector<int>> getExtreme(std::vector<int> values, int deviation)
 {
     std::vector<int> drops;
     std::vector<int> spikes;
+
     int average = 0;
     for (int val : values)
     {
         average += val;
     }
     average = average / values.size();
+
     for (int val : values)
     {
         if (val < average - deviation)
@@ -102,5 +104,6 @@ std::vector<std::vector<int>> getExtreme(std::vector<int> values, int deviation)
             spikes.push_back(val);
         }
     }
+
     return {drops, spikes};
 }

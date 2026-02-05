@@ -16,6 +16,9 @@
 
 class neural_network
 {
+private:
+    // neural_network();
+
 public:
     std::vector<std::unique_ptr<Layer>> layers;
 

@@ -175,19 +175,24 @@ std::vector<double> softmax(std::vector<double> z)
     return output;
 }
 
-double Adaptive_Piecewise_Linear(double x, const std::vector<double>&a, const std::vector<double> &b){
+double Adaptive_Piecewise_Linear(double x, const std::vector<double> &a, const std::vector<double> &b)
+{
     double result = std::max(0.0, x);
 
-    try{
-if (a.size() != b.size()){
-    throw "Input vectors must have the same size!"
-}
-for (size_t s = 0, s < a.size(); ++s){
-    result += a[s] * max(0.0,-x+b[s]);
-}
-return result;
-    }catch(ExceptionType e){
-cout << e << endl;
+    try
+    {
+        if (a.size() != b.size())
+        {
+            throw "Input vectors must have the same size!";
+        }
+        for (size_t s = 0; s < a.size(); ++s)
+        {
+            result += a[s] * std::max(0.0, -x + b[s]);
+        }
+        return result;
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
     }
 }
-
