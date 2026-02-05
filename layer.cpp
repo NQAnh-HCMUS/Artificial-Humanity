@@ -52,9 +52,8 @@ public:
 class Relu : public Layer
 {
 public:
-    std::vector<double> forward(const std::vector<double> input_data) override
+    std::vector<double> forward(const std::vector<double> input) override
     {
-        input = input_data;
         output = vector_reLu(input);
         return output;
     }
@@ -85,7 +84,7 @@ public:
         // std::cout << "LeakyRelu::forward(size=" << input.size() << ", alpha=" << alpha << ") completed" << std::endl;
         return output;
     }
-    std::vector<double> backward(std::vector<double> error, double learning_rate) override
+    std::vector<double> backward(std::vector<double> error, double learning_rate=0.01) override
     {
         std::vector<double> derivative = vector_leakyRelu_derivative(input, alpha);
         std::vector<double> grad_input;
@@ -111,7 +110,7 @@ public:
         // std::cout << "Tanh::forward(size=" << input.size() << ") completed" << std::endl;
         return output;
     }
-    std::vector<double> backward(std::vector<double> error, double learning_rate) override
+    std::vector<double> backward(std::vector<double> error, double learning_rate=0.01) override
     {
         std::vector<double> derivative = vector_tanh_derivative(input);
         std::vector<double> grad_input;
@@ -154,7 +153,7 @@ public:
         // std::cout << "Linear::forward(in=" << input_neuron << ", out=" << output_neuron << ") completed" << std::endl;
         return output;
     }
-    std::vector<double> backward(std::vector<double> error, double learning_rate) override
+    std::vector<double> backward(std::vector<double> error, double learning_rate=0.01) override
     {
         std::vector<double> input_error;               // dE/dX
         std::vector<std::vector<double>> weight_error; // dE/dW

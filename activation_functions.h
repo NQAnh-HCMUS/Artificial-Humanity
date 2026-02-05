@@ -7,9 +7,9 @@
 // non-linear transformations on input data.
 
 #include <iostream>
-#include <iostream>
 #include <cmath>
 #include <vector>
+#include <algorithm>
 
 /**
  * The sigmoid function maps any real-valued number to a value between 0 and 1.
