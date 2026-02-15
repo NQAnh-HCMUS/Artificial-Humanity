@@ -58,20 +58,6 @@ double leakyRelu(double x, double alpha = 0.01);
 double leakyRelu_derivative(double x, double alpha = 0.01);
 
 /**
- * @brief The Hyperbolic Tangent (tanh) activation function.
- * @param x the input value
- * @return the output value of the tanh function
- */
-double tanh(double x);
-
-/**
- * @brief The derivative of the Hyperbolic Tangent (tanh) activation function.
- * @param x the input value
- * @return the output value of the derivative of the tanh function
- */
-double tanh_derivative(double x);
-
-/**
  * @brief A vectorized version of the sigmoid function.
  * @param x the input vector
  * @return a vector where each element is the sigmoid of the corresponding element in x
@@ -116,23 +102,47 @@ std::vector<double> vector_leakyRelu(const std::vector<double> x, double alpha =
 std::vector<double> vector_leakyRelu_derivative(const std::vector<double> x, double alpha = 0.01);
 
 /**
- * @brief A vectorized version of the Hyperbolic Tangent (tanh) activation function.
- * @param x the input vector
- * @return a vector where each element is the tanh of the corresponding element in x
- */
-std::vector<double> vector_tanh(const std::vector<double> x);
-
-/**
- * @brief A vectorized version of the derivative of the Hyperbolic Tangent (tanh) activation function.
- * @param x the input vector
- * @return a vector where each element is the derivative of the tanh function of the corresponding element in x
- */
-std::vector<double> vector_tanh_derivative(const std::vector<double> x);
-
-/**
  * @brief The Softmax activation function.
  * @param z the input vector
  * @return a vector where each element is the softmax of the corresponding element in z
  */
 std::vector<double> softmax(std::vector<double> z);
+
+// APL: Adaptive Piecewise Linear
+/**
+ * @brief The Adaptive Piecewise Linear (APL) activation function.
+ * @param x the input value
+ * @param a the learned slope parameters for each hinge
+ * @param b the learned shift parameters for each hinge
+ * @return the output value of the APL function
+ */
+double apl(double x, const std::vector<double> &a, const std::vector<double> &b);
+
+/**
+ * @brief The derivative of the Adaptive Piecewise Linear (APL) activation function.
+ * @param x the input value
+ * @param a the learned slope parameters for each hinge
+ * @param b the learned shift parameters for each hinge
+ * @return the output value of the derivative of the APL function
+ */
+double apl_derivative(double x, const std::vector<double> &a, const std::vector<double> &b);
+
+/**
+ * @brief A vectorized version of the Adaptive Piecewise Linear (APL) activation function.
+ * @param x the input vector
+ * @param a the learned slope parameters for each hinge
+ * @param b the learned shift parameters for each hinge
+ * @return a vector where each element is the APL of the corresponding element in x
+ */
+std::vector<double> vector_apl(const std::vector<double> &x, const std::vector<double> &a, const std::vector<double> &b);
+
+/**
+ * @brief A vectorized version of the derivative of the Adaptive Piecewise Linear (APL) activation function.
+ * @param x the input vector
+ * @param a the learned slope parameters for each hinge
+ * @param b the learned shift parameters for each hinge
+ * @return a vector where each element is the derivative of the APL function of the corresponding element in x
+ */
+std::vector<double> vector_apl_derivative(const std::vector<double> &x, const std::vector<double> &a, const std::vector<double> &b);
+
 #endif // ACTIVATION_FUNCTIONS_H
