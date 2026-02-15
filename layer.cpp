@@ -67,82 +67,6 @@ public:
     }
 };
 
-/**
- * @brief Rectified Linear Unit activation layer.
- *
- * Applies ReLU function during forward pass and its derivative during backpropagation.
- */
-class Relu : public Layer
-{
-public:
-    /**
-     * @brief Apply ReLU to each input element.
-     * @param input_data input vector
-     * @return vector of ReLU activations
-     */
-    std::vector<double> forward(const std::vector<double> input_data) override
-    {
-        input = input_data;
-        output = vector_reLu(input);
-        return output;
-    }
-    /**
-     * @brief Backpropagate through the ReLU nonlinearity.
-     * @param error gradient at the layer output
-     * @param learning_rate unused (no trainable parameters)
-     * @return gradient with respect to the layer input
-     */
-    std::vector<double> backward(std::vector<double> error, double learning_rate) override
-    {
-        std::vector<double> derivative = vector_reLu_derivative(input);
-        std::vector<double> gradient_input;
-        for (int i = 0; i < derivative.size(); ++i)
-        {
-            gradient_input.push_back(derivative[i] * error[i]);
-        }
-        // std::cout << "Relu::backward(size=" << gradient_input.size() << ", lr=" << learning_rate << ") completed" << std::endl;
-        return gradient_input;
-    }
-};
-
-/**
- * @brief Leaky ReLU activation layer.
- *
- * Uses a small slope for negative inputs to reduce dead neurons.
- */
-class LeakyRelu : public Layer
-{
-public:
-    double alpha = 0.01; // Negative slope coefficient for Leaky ReLU.
-    /**
-     * @brief Apply Leaky ReLU to each input element.
-     * @param input_data input vector
-     * @return vector of Leaky ReLU activations
-     */
-    std::vector<double> forward(const std::vector<double> input_data) override
-    {
-        input = input_data;
-        output = vector_leakyRelu(input, alpha);
-        return output;
-    }
-    /**
-     * @brief Backpropagate through the Leaky ReLU nonlinearity.
-     * @param error gradient at the layer output
-     * @param learning_rate unused (no trainable parameters)
-     * @return gradient with respect to the layer input
-     */
-    std::vector<double> backward(std::vector<double> error, double learning_rate) override
-    {
-        std::vector<double> derivative = vector_leakyRelu_derivative(input, alpha);
-        std::vector<double> gradient_input;
-        for (int i = 0; i < derivative.size(); ++i)
-        {
-            gradient_input.push_back(derivative[i] * error[i]);
-        }
-        return gradient_input;
-    }
-};
-
 #define DEFAULT_HINGES 3
 /**
  * @brief Adaptive Piecewise Linear (APL) activation layer.
@@ -233,10 +157,6 @@ public:
         return gradient_input;
     }
 };
-
-// Linear layer
-
-// The Linear layer or fully connected layer is also inherited from the Layer class. The Linear class constructor requires the number of input and output neurons to create its instance. Then according to these numbers, its weights and bias will be created.
 
 /**
  * @brief Fully connected linear layer.

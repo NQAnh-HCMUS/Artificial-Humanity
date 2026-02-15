@@ -42,65 +42,6 @@ double reluDerivative(double x)
     return result;
 }
 
-std::vector<double> vector_reLu(const std::vector<double> x)
-{
-    std::vector<double> result;
-    result.reserve(x.size());
-    for (double i : x)
-        result.push_back(relu(i));
-    return result;
-}
-
-std::vector<double> vector_reLu_derivative(const std::vector<double> x)
-{
-    std::vector<double> result;
-    result.reserve(x.size());
-    for (double i : x)
-        result.push_back(reluDerivative(i));
-    return result;
-}
-
-double leakyRelu(double x, double alpha)
-{
-    double result = (x > 0) ? x : alpha * x;
-    return result;
-}
-
-double leakyRelu_derivative(double x, double alpha)
-{
-    double result = (x >= 0) ? 1 : alpha;
-    return result;
-}
-
-std::vector<double> vector_leakyRelu(const std::vector<double> x, double alpha)
-{
-    std::vector<double> result;
-    result.reserve(x.size());
-    for (double i : x)
-        result.push_back(leakyRelu(i, alpha));
-    return result;
-}
-
-std::vector<double> vector_leakyRelu_derivative(const std::vector<double> x, double alpha)
-{
-    std::vector<double> result;
-    result.reserve(x.size());
-    for (double i : x)
-        result.push_back(leakyRelu_derivative(i, alpha));
-    return result;
-}
-
-std::vector<double> softmax(std::vector<double> z)
-{
-    std::vector<double> output;
-    double sum = 0.0;
-    for (double i : z)
-        sum += exp(i);
-    for (int j = 0; j < z.size(); j++)
-        output.push_back(exp(z[j]) / sum);
-    return output;
-}
-
 double apl(double x, const std::vector<double> &a, const std::vector<double> &b)
 {
     double result = relu(x);

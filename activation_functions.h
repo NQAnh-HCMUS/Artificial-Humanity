@@ -28,36 +28,6 @@ double sigmoid(double x);
 double sigmoidDerivative(double x);
 
 /**
- * @brief The Rectified Linear Unit (ReLU) activation function.
- * @param x the input value
- * @return the output value of the ReLU function
- */
-double relu(double x);
-
-/**
- * @brief The derivative of the Rectified Linear Unit (ReLU) activation function.
- * @param x the input value
- * @return the output value of the derivative of the ReLU function
- */
-double reluDerivative(double x);
-
-/**
- * @brief The Leaky Rectified Linear Unit (Leaky ReLU) activation function.
- * @param x the input value
- * @param alpha the leak rate, defaults to 0.01
- * @return the output value of the Leaky ReLU function
- */
-double leakyRelu(double x, double alpha = 0.01);
-
-/**
- * @brief The derivative of the Leaky Rectified Linear Unit (Leaky ReLU) activation function.
- * @param x the input value
- * @param alpha the leak rate, defaults to 0.01
- * @return the output value of the derivative of the Leaky ReLU function
- */
-double leakyRelu_derivative(double x, double alpha = 0.01);
-
-/**
  * @brief A vectorized version of the sigmoid function.
  * @param x the input vector
  * @return a vector where each element is the sigmoid of the corresponding element in x
@@ -72,41 +42,18 @@ std::vector<double> vector_sigmoid(const std::vector<double> x);
 std::vector<double> vector_sigmoid_derivative(const std::vector<double> x);
 
 /**
- * @brief A vectorized version of the Rectified Linear Unit (ReLU) activation function.
- * @param x the input vector
- * @return a vector where each element is the ReLU of the corresponding element in x
+ * @brief The Rectified Linear Unit (ReLU) activation function.
+ * @param x the input value
+ * @return the output value of the ReLU function
  */
-std::vector<double> vector_reLu(const std::vector<double> x);
+double relu(double x);
 
 /**
- * @brief A vectorized version of the derivative of the Rectified Linear Unit (ReLU) activation function.
- * @param x the input vector
- * @return a vector where each element is the derivative of the ReLU function of the corresponding element in x
+ * @brief The derivative of the Rectified Linear Unit (ReLU) activation function.
+ * @param x the input value
+ * @return the output value of the derivative of the ReLU function
  */
-std::vector<double> vector_reLu_derivative(const std::vector<double> x);
-
-/**
- * @brief A vectorized version of the Leaky Rectified Linear Unit (Leaky ReLU) activation function.
- * @param x the input vector
- * @param alpha the leak rate, defaults to 0.01
- * @return a vector where each element is the Leaky ReLU of the corresponding element in x
- */
-std::vector<double> vector_leakyRelu(const std::vector<double> x, double alpha = 0.01);
-
-/**
- * @brief A vectorized version of the derivative of the Leaky Rectified Linear Unit (Leaky ReLU) activation function.
- * @param x the input vector
- * @param alpha the leak rate, defaults to 0.01
- * @return a vector where each element is the derivative of the Leaky ReLU function of the corresponding element in x
- */
-std::vector<double> vector_leakyRelu_derivative(const std::vector<double> x, double alpha = 0.01);
-
-/**
- * @brief The Softmax activation function.
- * @param z the input vector
- * @return a vector where each element is the softmax of the corresponding element in z
- */
-std::vector<double> softmax(std::vector<double> z);
+double reluDerivative(double x);
 
 // APL: Adaptive Piecewise Linear
 /**

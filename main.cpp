@@ -3,7 +3,7 @@
 #include "neural_network.cpp"
 // #include "knowledge_logic.cpp"
 
-#define number_of_hinges 3
+#define number_of_hinges 4
 #define epochs 10000
 #define learning_rate 0.01
 
@@ -22,14 +22,14 @@ int main()
 
     // Example input data: XOR logic gate
     std::vector<std::vector<double>> X_train = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
-    std::vector<std::vector<double>> y_train = {{0}, {1}, {1}, {0}};
+    std::vector<std::vector<double>> y_train = {{0}, {0}, {0}, {1}};
 
     // Train network
     neural_network.fit(X_train, y_train, epochs, learning_rate);
 
     // Test network
     const std::vector<std::vector<double>> X_test = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
-    const std::vector<int> y_test = {0, 1, 1, 0};
+    const std::vector<int> y_test = {0, 0, 0, 1};
 
     for (size_t i = 0; i < X_test.size(); ++i)
     {
