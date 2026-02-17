@@ -1,6 +1,3 @@
-// Layers Implementation
-// Then we will move into the very core of constructing a neural network which is the layers. To implement these layer first we need to import the following dependencies.
-
 #include <vector>
 // #include <iostream>
 #include "activation_functions.cpp"

@@ -13,12 +13,14 @@ int main()
     neural_network neural_network;
 
     // Add layers to the network
-    neural_network.add(new Linear(2, number_of_hinges));
-    neural_network.add(new APL(number_of_hinges));
-    neural_network.add(new Linear(number_of_hinges, number_of_hinges));
-    neural_network.add(new APL(number_of_hinges));
-    neural_network.add(new Linear(number_of_hinges, 1));
-    neural_network.add(new Sigmoid());
+
+    // In main:
+    neural_network.add(std::make_unique<Linear>(2, number_of_hinges));
+    neural_network.add(std::make_unique<APL>(number_of_hinges));
+    neural_network.add(std::make_unique<Linear>(number_of_hinges, number_of_hinges));
+    neural_network.add(std::make_unique<APL>(number_of_hinges));
+    neural_network.add(std::make_unique<Linear>(number_of_hinges, 1));
+    neural_network.add(std::make_unique<Sigmoid>());
 
     // Example input data: XOR logic gate
     std::vector<std::vector<double>> X_train = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};

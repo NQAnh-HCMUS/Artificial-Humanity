@@ -1,5 +1,6 @@
 #include "math_functions.h"
 #include <iostream>
+#include "tensor.cpp"
 
 double dotProduct(std::vector<double> &vector1, std::vector<double> &vector2)
 {
@@ -61,9 +62,30 @@ std::vector<std::vector<double>> uniformWeightInitializer(int rows, int cols)
             weights[i][j] = dis(gen);
         }
     }
-    // std::cout << "uniform random weight vector (" << rows << ", " << cols << ") initialized" << std::endl;
+
     return weights;
 }
+
+// Tensor uniformTensorInitializer(std::vector<double> rows, std::vector<double> cols)
+// {
+//     // Random number generation setup
+//     std::random_device rd;
+//     std::mt19937 gen(rd() ^ std::chrono::system_clock::now().time_since_epoch().count());
+//     std::uniform_real_distribution<> dis(-1.0, 1.0);
+
+//     // Initialize weights matrix
+//     Tensor weights(rows, cols);
+
+//     // for (double i = 0; i < rows; ++i)
+//     // {
+//     //     for (double j = 0; j < cols; ++j)
+//     //     {
+//     //         weights[i][j] = dis(gen);
+//     //     }
+//     // }
+
+//     return weights;
+// }
 
 std::vector<double> biasInitailizer(int size)
 {
