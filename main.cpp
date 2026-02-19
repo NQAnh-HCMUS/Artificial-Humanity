@@ -3,91 +3,46 @@
 #include "neural_network.cpp"
 // #include "knowledge_logic.cpp"
 
+#define number_of_hinges 10
+#define epochs 100000
+#define learning_rate 0.01
+
 int main()
 {
     // Initialize the neural network
     neural_network neural_network;
 
-    // Add layers dynamically
-    neural_network.add(new Linear(2, 3));
-    neural_network.add(new Relu());
-    neural_network.add(new Linear(3, 3));
-    neural_network.add(new Relu());
-    neural_network.add(new Linear(3, 1));
-    neural_network.add(new Sigmoid());
+    // Add layers to the network
+    neural_network.add(std::make_unique<Linear>(2, number_of_hinges));
+    neural_network.add(std::make_unique<APL>(number_of_hinges));
+    neural_network.add(std::make_unique<Linear>(number_of_hinges, number_of_hinges));
+    neural_network.add(std::make_unique<APL>(number_of_hinges));
+    neural_network.add(std::make_unique<Linear>(number_of_hinges, 1));
+    neural_network.add(std::make_unique<Sigmoid>());
 
-    // Example input data
-    std::vector<std::vector<double>> X = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
-    std::vector<std::vector<double>> y = {{0}, {1}, {1}, {0}};
+    // Example input data: XOR logic gate
+    std::vector<std::vector<double>> X_train = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+    std::vector<std::vector<double>> y_train = {{0}, {0}, {0}, {1}};
 
-    // Train the network
-    neural_network.fit(X, y, 10000, 0.01);
+    // Train network
+    neural_network.fit(X_train, y_train, epochs, learning_rate);
 
-    // Test the network using XOR example
-    std::vector<double> input = {0, 0};
-    std::vector<double> output_prob = neural_network.predict(input);
-    std::vector<double> output = {0};
-    if (output_prob[0] > 0.5)
-    {
-        output = {1};
-    }
-    else
-    {
-        output = {0};
-    }
-    std::cout << "Input: " << input[0] << ", " << input[1] << std::endl;
-    std::cout << "Output Probability: " << output_prob[0] << std::endl;
-    std::cout << "Output: " << output[0] << std::endl;
-    std::cout << "Expected Output: " << 0 << std::endl;
-    std::cout << "----------------------" << std::endl;
+    // Test network
+    const std::vector<std::vector<double>> X_test = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+    const std::vector<int> y_test = {0, 0, 0, 1};
 
-    input = {0, 1};
-    output_prob = neural_network.predict(input);
-    if (output_prob[0] > 0.5)
+    for (size_t i = 0; i < X_test.size(); ++i)
     {
-        output = {1};
-    }
-    else
-    {
-        output = {0};
-    }
-    std::cout << "Input: " << input[0] << ", " << input[1] << std::endl;
-    std::cout << "Output Probability: " << output_prob[0] << std::endl;
-    std::cout << "Output: " << output[0] << std::endl;
-    std::cout << "Expected Output: " << 1 << std::endl;
-    std::cout << "----------------------" << std::endl;
+        const std::vector<double> &input = X_test[i];
+        const std::vector<double> output_prob = neural_network.predict(input);
+        const int output = (output_prob[0] > 0.5) ? 1 : 0;
 
-    input = {1, 0};
-    output_prob = neural_network.predict(input);
-    if (output_prob[0] > 0.5)
-    {
-        output = {1};
+        std::cout << "Input: " << input[0] << ", " << input[1] << std::endl;
+        std::cout << "Output Probability: " << output_prob[0] << std::endl;
+        std::cout << "Output: " << output << std::endl;
+        std::cout << "Expected Output: " << y_test[i] << std::endl;
+        std::cout << "----------------------" << std::endl;
     }
-    else
-    {
-        output = {0};
-    }
-    std::cout << "Input: " << input[0] << ", " << input[1] << std::endl;
-    std::cout << "Output Probability: " << output_prob[0] << std::endl;
-    std::cout << "Output: " << output[0] << std::endl;
-    std::cout << "Expected Output: " << 1 << std::endl;
-    std::cout << "----------------------" << std::endl;
-
-    input = {1, 1};
-    output_prob = neural_network.predict(input);
-    if (output_prob[0] > 0.5)
-    {
-        output = {1};
-    }
-    else
-    {
-        output = {0};
-    }
-    std::cout << "Input: " << input[0] << ", " << input[1] << std::endl;
-    std::cout << "Output Probability: " << output_prob[0] << std::endl;
-    std::cout << "Output: " << output[0] << std::endl;
-    std::cout << "Expected Output: " << 0 << std::endl;
-    std::cout << "----------------------" << std::endl;
 
     return 0;
 }

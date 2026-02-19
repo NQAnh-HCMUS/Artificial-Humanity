@@ -8,8 +8,9 @@
 #include <random>
 #include <functional>
 #include <algorithm>
+#include <math.h>
+#include <cmath>
 #include <chrono>
-
 /**
  * @brief Computes the dot product of two vectors
  * @param[in] vector1 The first vector

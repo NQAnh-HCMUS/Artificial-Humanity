@@ -1,90 +1,112 @@
-// Layers Implementation
-// Then we will move into the very core of constructing a neural network which is the layers. To implement these layer first we need to import the following dependencies.
-
 #include <vector>
-#include <iostream>
+// #include <iostream>
 #include "activation_functions.cpp"
-// #include "activation_functions.h"
 #include "math_functions.cpp"
-// #include "math_functions.h"
-// Based class 'Layer'
-
-// First, we shall define the based class for all layer. This class will consists of two public variables, input and output, and two public virtual method, forward and backward.
-
+// Base layer class
+/**
+ * @brief Abstract base class for neural network layers.
+ */
 class Layer
 {
 public:
     std::vector<double> input;
     std::vector<double> output;
+    /**
+     * @brief Compute the layer output for the given input.
+     * @param input_data input vector for the layer
+     * @return output vector produced by the layer
+     */
     virtual std::vector<double> forward(const std::vector<double> input_data) = 0;
+    /**
+     * @brief Backpropagate error through the layer and apply parameter updates.
+     * @param error gradient of the loss with respect to the layer output
+     * @param learning_rate scalar learning rate used for parameter updates
+     * @return gradient of the loss with respect to the layer input
+     */
     virtual std::vector<double> backward(std::vector<double> error, double learning_rate) = 0;
 };
-// Sigmoid layer
 
-// The Sigmoid class is inherited from the Layer class with two override method for forward and backward, which allows the information to propagate through feed forward process and backpropagation process.
-
+/**
+ * @brief Sigmoid activation layer.
+ *
+ * Applies sigmoid function during forward pass and its derivative during backpropagation.
+ */
 class Sigmoid : public Layer
 {
 public:
+    /**
+     * @brief Apply sigmoid to each input element.
+     * @param input_data input vector
+     * @return vector of sigmoid activations
+     */
     std::vector<double> forward(const std::vector<double> input_data) override
     {
         input = input_data;
         output = vector_sigmoid(input);
-        // std::cout << "Sigmoid::forward(size=" << input.size() << ") completed" << std::endl;
         return output;
     }
+    /**
+     * @brief Backpropagate through the sigmoid nonlinearity.
+     * @param error gradient at the layer output
+     * @param learning_rate unused (no trainable parameters)
+     * @return gradient with respect to the layer input
+     */
     std::vector<double> backward(std::vector<double> error, double learning_rate) override
     {
         std::vector<double> derivative = vector_sigmoid_derivative(input);
-        std::vector<double> grad_input;
+        std::vector<double> gradient_input;
         for (int i = 0; i < derivative.size(); ++i)
         {
-            grad_input.push_back(derivative[i] * error[i]);
+            gradient_input.push_back(derivative[i] * error[i]);
         }
-        // std::cout << "Sigmoid::backward(size=" << grad_input.size() << ", lr=" << learning_rate << ") completed" << std::endl;
-        return grad_input;
+        return gradient_input;
     }
 };
-// ReLU layer
 
-// The Relu class is inherited from the Layer class with two override method for forward and backward, which allows the information to propagate through feed forward process and backpropagation process.
-
-class Relu : public Layer
+#define DEFAULT_HINGES 3
+/**
+ * @brief Adaptive Piecewise Linear (APL) activation layer.
+ *
+ * Implements a learnable piecewise-linear activation with hinge positions (b_i) and slopes (a_i). Parameters are updated with SGD during backprop.
+ */
+class APL : public Layer
 {
 public:
-    std::vector<double> forward(const std::vector<double> input) override
+    /** @brief Number of hinges (hyperparameter). */
+    int S;
+    /** @brief Learnable slopes for each hinge. */
+    std::vector<double> a;
+    /** @brief Learnable hinge positions (thresholds). */
+    std::vector<double> b;
+    /** @brief Accumulated gradients for slopes (a_i) during backpropagation. */
+    std::vector<double> grad_a, grad_b;
+    /**
+     * @brief Construct an APL layer and initialize hinge parameters.
+     * @param num_hings requested number of hinges (currently unused)
+     */
+    APL(int num_hings = DEFAULT_HINGES) : S(num_hings)
     {
-        output = vector_reLu(input);
-        return output;
+        a.resize(S, 0.0); // start with zero contribution -> behaves like ReLU
+        b.resize(S);
+        if (S == 1)
+            b[0] = 0.0;
+        else
+            for (int i = 0; i < S; ++i)
+                b[i] = -1.0 + (2.0 * i) / (S - 1); // linearly spaced in [-1, 1]
     }
-    std::vector<double> backward(std::vector<double> error, double learning_rate) override
-    {
-        std::vector<double> derivative = vector_reLu_derivative(input);
-        std::vector<double> grad_input;
-        for (int i = 0; i < derivative.size(); ++i)
-        {
-            grad_input.push_back(derivative[i] * error[i]);
-        }
-        // std::cout << "Relu::backward(size=" << grad_input.size() << ", lr=" << learning_rate << ") completed" << std::endl;
-        return grad_input;
-    }
-};
-// Leaky ReLU layer
 
-// The LeakyRelu class is inherited from the Layer class with two override method for forward and backward, which allows the information to propagate through feed forward process and backpropagation process.
-
-class LeakyRelu : public Layer
-{
-public:
-    double alpha = 0.01;
+    /**
+     * @brief Apply APL(x) = ReLU(x) + Σ a_i * max(0, b_i - x) to each input element.
+     * @param input_data input vector
+     * @return vector of APL activations
+     */
     std::vector<double> forward(const std::vector<double> input_data) override
     {
         input = input_data;
-        output = vector_leakyRelu(input, alpha);
-        // std::cout << "LeakyRelu::forward(size=" << input.size() << ", alpha=" << alpha << ") completed" << std::endl;
+        output = vector_apl(input, a, b);
         return output;
     }
-    std::vector<double> backward(std::vector<double> error, double learning_rate=0.01) override
+    std::vector<double> backward(std::vector<double> error, double learning_rate) override
     {
         std::vector<double> derivative = vector_leakyRelu_derivative(input, alpha);
         std::vector<double> grad_input;
@@ -110,30 +132,45 @@ public:
         // std::cout << "Tanh::forward(size=" << input.size() << ") completed" << std::endl;
         return output;
     }
-    std::vector<double> backward(std::vector<double> error, double learning_rate=0.01) override
+    std::vector<double> backward(std::vector<double> error, double learning_rate) override
     {
         std::vector<double> derivative = vector_tanh_derivative(input);
         std::vector<double> grad_input;
         for (int i = 0; i < derivative.size(); ++i)
         {
-            grad_input.push_back(derivative[i] * error[i]);
+            a[i] -= learning_rate * grad_a[i];
+            b[i] -= learning_rate * grad_b[i];
         }
-        // std::cout << "Tanh::backward(size=" << grad_input.size() << ", lr=" << learning_rate << ") completed" << std::endl;
-        return grad_input;
+
+        // Optional: enforce sorted knot positions (improves stability)
+        std::sort(b.begin(), b.end());
+
+        return gradient_input;
     }
 };
-// Linear layer
 
-// The Linear layer or fully connected layer is also inherited from the Layer class. The Linear class constructor requires the number of input and output neurons to create its instance. Then according to these numbers, its weights and bias will be created.
-
+/**
+ * @brief Fully connected linear layer.
+ *
+ * Computes an affine transform: output = W * input + b.
+ */
 class Linear : public Layer
 {
 public:
+    /** @brief Number of input neurons. */
     int input_neuron;
+    /** @brief Number of output neurons. */
     int output_neuron;
+    /** @brief Weight matrix with shape [output_neuron][input_neuron]. */
     std::vector<std::vector<double>> weights;
+    /** @brief Bias vector with length output_neuron. */
     std::vector<double> bias;
 
+    /**
+     * @brief Construct a linear layer with initialized weights and biases.
+     * @param num_in number of input neurons
+     * @param num_out number of output neurons
+     */
     Linear(int num_in, int num_out)
     {
         input_neuron = num_in;
@@ -142,18 +179,23 @@ public:
         bias = biasInitailizer(num_out);
     }
 
+    /**
+     * @brief Compute the affine transform for the input.
+     * @param input_data input vector
+     * @return output vector after linear transform
+     */
     std::vector<double> forward(const std::vector<double> input_data) override
     {
         input = input_data;
         output.clear();
+        // #pragma omp parallel for
         for (int i = 0; i < output_neuron; i++)
         {
             output.push_back(dotProduct(weights[i], input) + bias[i]);
         }
-        // std::cout << "Linear::forward(in=" << input_neuron << ", out=" << output_neuron << ") completed" << std::endl;
         return output;
     }
-    std::vector<double> backward(std::vector<double> error, double learning_rate=0.01) override
+    std::vector<double> backward(std::vector<double> error, double learning_rate) override
     {
         std::vector<double> input_error;               // dE/dX
         std::vector<std::vector<double>> weight_error; // dE/dW
@@ -187,7 +229,6 @@ public:
             std::vector<double> delta_weight = scalarVectorMultiplication(weight_error[i], learning_rate);
             weights[i] = subtract(weights[i], delta_weight);
         }
-        // std::cout << "Linear::backward(size=" << input_error.size() << ", lr=" << learning_rate << ") completed" << std::endl;
         return input_error;
     }
 };
