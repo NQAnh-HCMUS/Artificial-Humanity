@@ -2,7 +2,6 @@
 // #include <iostream>
 #include "activation_functions.cpp"
 #include "math_functions.cpp"
-
 // Base layer class
 /**
  * @brief Abstract base class for neural network layers.
@@ -74,25 +73,26 @@ class APL : public Layer
 {
 public:
     /** @brief Number of hinges (hyperparameter). */
-    int s;
+    int S;
     /** @brief Learnable slopes for each hinge. */
     std::vector<double> a;
     /** @brief Learnable hinge positions (thresholds). */
     std::vector<double> b;
-
+    /** @brief Accumulated gradients for slopes (a_i) during backpropagation. */
+    std::vector<double> grad_a, grad_b;
     /**
      * @brief Construct an APL layer and initialize hinge parameters.
      * @param num_hings requested number of hinges (currently unused)
      */
-    APL(int num_hings = DEFAULT_HINGES) : s(num_hings)
+    APL(int num_hings = DEFAULT_HINGES) : S(num_hings)
     {
-        a.resize(s, 0.0); // start with zero contribution -> behaves like ReLU
-        b.resize(s);
-        if (s == 1)
+        a.resize(S, 0.0); // start with zero contribution -> behaves like ReLU
+        b.resize(S);
+        if (S == 1)
             b[0] = 0.0;
         else
-            for (int i = 0; i < s; ++i)
-                b[i] = -1.0 + (2.0 * i) / (s - 1); // linearly spaced in [-1, 1]
+            for (int i = 0; i < S; ++i)
+                b[i] = -1.0 + (2.0 * i) / (S - 1); // linearly spaced in [-1, 1]
     }
 
     /**
@@ -120,18 +120,19 @@ public:
 
         // Gradient w.r.t input (dL/dx)
         std::vector<double> gradient_input;
-        gradient_input.reserve(input.size());
-        for (size_t j = 0; j < input.size(); ++j)
+        int input_size = input.size();
+        gradient_input.reserve(input_size);
+        for (size_t j = 0; j < input_size; ++j)
             gradient_input.push_back(derivative[j] * error[j]);
 
         // Accumulate gradients for a_i and b_i over all input samples
-        std::vector<double> grad_a(s, 0.0);
-        std::vector<double> grad_b(s, 0.0);
-        for (size_t j = 0; j < input.size(); ++j)
+        grad_a.assign(S, 0.0);
+        grad_b.assign(S, 0.0);
+        for (size_t j = 0; j < input_size; ++j)
         {
             double x = input[j];
             double err = error[j];
-            for (int i = 0; i < s; ++i)
+            for (int i = 0; i < S; ++i)
             {
                 if (x < b[i]) // only when the hinge is active
                 {
@@ -142,14 +143,14 @@ public:
         }
 
         // Update parameters (SGD)
-        for (int i = 0; i < s; ++i)
+        for (int i = 0; i < S; ++i)
         {
             a[i] -= learning_rate * grad_a[i];
             b[i] -= learning_rate * grad_b[i];
         }
 
         // Optional: enforce sorted knot positions (improves stability)
-        // std::sort(b.begin(), b.end());
+        std::sort(b.begin(), b.end());
 
         return gradient_input;
     }
@@ -194,6 +195,7 @@ public:
     {
         input = input_data;
         output.clear();
+        // #pragma omp parallel for
         for (int i = 0; i < output_neuron; i++)
         {
             output.push_back(dotProduct(weights[i], input) + bias[i]);

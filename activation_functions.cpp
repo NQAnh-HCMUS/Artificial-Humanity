@@ -45,8 +45,8 @@ double reluDerivative(double x)
 double apl(double x, const std::vector<double> &a, const std::vector<double> &b)
 {
     double result = relu(x);
-    // int S = a.size();
-    for (size_t i = 0; i < a.size(); ++i)
+    int S = a.size();
+    for (size_t i = 0; i < S; ++i)
     {
         if (x < b[i]) // max(0, -x + b_i)
             result += a[i] * (b[i] - x);
@@ -57,8 +57,8 @@ double apl(double x, const std::vector<double> &a, const std::vector<double> &b)
 double apl_derivative(double x, const std::vector<double> &a, const std::vector<double> &b)
 {
     double dx = reluDerivative(x);
-    // int S = a.size();
-    for (size_t i = 0; i < a.size(); ++i)
+    int S = a.size();
+    for (size_t i = 0; i < S; ++i)
     {
         if (x < b[i])
             dx -= a[i];

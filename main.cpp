@@ -3,8 +3,8 @@
 #include "neural_network.cpp"
 // #include "knowledge_logic.cpp"
 
-#define number_of_hinges 4
-#define epochs 10000
+#define number_of_hinges 10
+#define epochs 100000
 #define learning_rate 0.01
 
 int main()
@@ -13,8 +13,6 @@ int main()
     neural_network neural_network;
 
     // Add layers to the network
-
-    // In main:
     neural_network.add(std::make_unique<Linear>(2, number_of_hinges));
     neural_network.add(std::make_unique<APL>(number_of_hinges));
     neural_network.add(std::make_unique<Linear>(number_of_hinges, number_of_hinges));
