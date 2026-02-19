@@ -106,37 +106,44 @@ public:
         output = vector_apl(input, a, b);
         return output;
     }
+
+    /**
+     * @brief Backpropagate through APL, compute dL/dx, dL/da_i, dL/db_i and update a_i, b_i and update hinge parameters.
+     * @param error gradient at the layer output
+     * @param learning_rate learning rate for SGD updates of a and b
+     * @return gradient with respect to the layer input
+     */
     std::vector<double> backward(std::vector<double> error, double learning_rate) override
     {
-        std::vector<double> derivative = vector_leakyRelu_derivative(input, alpha);
-        std::vector<double> grad_input;
-        for (int i = 0; i < derivative.size(); ++i)
+        // Derivative of activation w.r.t input
+        std::vector<double> derivative = vector_apl_derivative(input, a, b);
+
+        // Gradient w.r.t input (dL/dx)
+        std::vector<double> gradient_input;
+        int input_size = input.size();
+        gradient_input.reserve(input_size);
+        for (size_t j = 0; j < input_size; ++j)
+            gradient_input.push_back(derivative[j] * error[j]);
+
+        // Accumulate gradients for a_i and b_i over all input samples
+        grad_a.assign(S, 0.0);
+        grad_b.assign(S, 0.0);
+        for (size_t j = 0; j < input_size; ++j)
         {
-            grad_input.push_back(derivative[i] * error[i]);
+            double x = input[j];
+            double err = error[j];
+            for (int i = 0; i < S; ++i)
+            {
+                if (x < b[i]) // only when the hinge is active
+                {
+                    grad_a[i] += err * (b[i] - x); // dL/da_i
+                    grad_b[i] += err * a[i];       // dL/db_i
+                }
+            }
         }
-        // std::cout << "LeakyRelu::backward(size=" << grad_input.size() << ", lr=" << learning_rate << ") completed" << std::endl;
-        return grad_input;
-    }
-};
-// Tanh layer
 
-// The Tanh class is inherited from the Layer class with two override method for forward and backward, which allows the information to propagate through feed-forward process and backpropagation process.
-
-class Tanh : public Layer
-{
-public:
-    std::vector<double> forward(const std::vector<double> input_data) override
-    {
-        input = input_data;
-        output = vector_tanh(input);
-        // std::cout << "Tanh::forward(size=" << input.size() << ") completed" << std::endl;
-        return output;
-    }
-    std::vector<double> backward(std::vector<double> error, double learning_rate) override
-    {
-        std::vector<double> derivative = vector_tanh_derivative(input);
-        std::vector<double> grad_input;
-        for (int i = 0; i < derivative.size(); ++i)
+        // Update parameters (SGD)
+        for (int i = 0; i < S; ++i)
         {
             a[i] -= learning_rate * grad_a[i];
             b[i] -= learning_rate * grad_b[i];
@@ -195,6 +202,12 @@ public:
         }
         return output;
     }
+    /**
+     * @brief Backpropagate through the linear layer and update parameters.
+     * @param error gradient at the layer output
+     * @param learning_rate learning rate for SGD updates
+     * @return gradient with respect to the layer input
+     */
     std::vector<double> backward(std::vector<double> error, double learning_rate) override
     {
         std::vector<double> input_error;               // dE/dX
