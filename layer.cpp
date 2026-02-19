@@ -11,6 +11,8 @@ class Layer
 public:
     std::vector<double> input;
     std::vector<double> output;
+    std::vector<double> grad_buffer;
+
     /**
      * @brief Compute the layer output for the given input.
      * @param input_data input vector for the layer
@@ -36,13 +38,14 @@ class Sigmoid : public Layer
 public:
     /**
      * @brief Apply sigmoid to each input element.
-     * @param input_data input vector
+     * @param input input vector
      * @return vector of sigmoid activations
      */
-    std::vector<double> forward(const std::vector<double> input_data) override
+    std::vector<double> forward(const std::vector<double> input) override
     {
-        input = input_data;
-        output = vector_sigmoid(input);
+        output.resize(input.size());
+        for (size_t i = 0; i < input.size(); ++i)
+            output[i] = sigmoid(input[i]);
         return output;
     }
     /**
@@ -53,13 +56,14 @@ public:
      */
     std::vector<double> backward(std::vector<double> error, double learning_rate) override
     {
-        std::vector<double> derivative = vector_sigmoid_derivative(input);
-        std::vector<double> gradient_input;
-        for (int i = 0; i < derivative.size(); ++i)
+        // In class Sigmoid: add member std::vector<double> grad_buffer;
+        grad_buffer.resize(input.size());
+        for (size_t i = 0; i < input.size(); ++i)
         {
-            gradient_input.push_back(derivative[i] * error[i]);
+            double deriv = sigmoidDerivative(input[i]);
+            grad_buffer[i] = deriv * error[i];
         }
-        return gradient_input;
+        return grad_buffer;
     }
 };
 
@@ -100,10 +104,11 @@ public:
      * @param input_data input vector
      * @return vector of APL activations
      */
-    std::vector<double> forward(const std::vector<double> input_data) override
+    std::vector<double> forward(const std::vector<double> input) override
     {
-        input = input_data;
-        output = vector_apl(input, a, b);
+        output.resize(input.size());
+        for (size_t i = 0; i < input.size(); ++i)
+            output[i] = apl(input[i], a, b);
         return output;
     }
 

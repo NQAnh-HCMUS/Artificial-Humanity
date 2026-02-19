@@ -62,7 +62,6 @@ public:
         {
             grad = (*it)->backward(grad, learning_rate);
         }
-        // std::cout << "NN::backward_propagation completed with lr=" << learning_rate << std::endl;
     }
 
     /**

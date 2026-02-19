@@ -4,6 +4,11 @@
 #include <vector>
 #include <cstddef>
 #include <iostream>
+#include <algorithm>
+#include <numeric>
+#include <stdexcept>
+#include <iomanip>
+#include <limits>
 
 /**
  * @brief Simple dense tensor with row-major storage.
@@ -84,6 +89,7 @@ public:
     ~Tensor() = default;
 
     //----------Tensor Element Queries----------
+
     /**
      * @brief Get tensor shape
      * @return Reference to the shape vector.
@@ -264,7 +270,7 @@ public:
 //----------Free Functions----------
 
 /**
- * @brief Helper function to check if two tensors have matching shapes.
+ * @brief Helper to check if two tensors match shapes.
  * @param a First tensor.
  * @param b Second tensor.
  * @throws std::invalid_argument If shapes do not match.
@@ -316,7 +322,7 @@ Tensor operator/(const Tensor &a, const Tensor &b);
 Tensor operator+(const Tensor &t, float scalar);
 
 /**
- * @brief Add scalar to tensor (element-wise, commutative).
+ * @brief Add scalar to tensor (element-wise).
  * @param scalar Scalar value to add.
  * @param t Input tensor.
  * @return Result tensor.
@@ -348,7 +354,7 @@ Tensor operator-(float scalar, const Tensor &t);
 Tensor operator*(const Tensor &t, float scalar);
 
 /**
- * @brief Multiply tensor by scalar (element-wise, commutative).
+ * @brief Multiply tensor by scalar (element-wise).
  * @param scalar Scalar multiplier.
  * @param t Input tensor.
  * @return Result tensor.
@@ -389,7 +395,7 @@ Tensor matmul(const Tensor &A, const Tensor &B);
 Tensor transpose(const Tensor &A);
 
 /**
- * @brief Sum all elements of a tensor.
+ * @brief Sum of all elements of a tensor.
  * @param t Input tensor.
  * @return Sum of all elements.
  */

@@ -1,10 +1,5 @@
 #include "tensor.h"
-#include <algorithm>
-#include <numeric>
-#include <stdexcept>
 
-#include <iomanip>
-#include <limits>
 // Private helper methods
 
 void Tensor::compute_strides()
