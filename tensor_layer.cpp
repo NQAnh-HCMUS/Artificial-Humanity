@@ -60,9 +60,9 @@ public:
         Tensor derivative = sigmoid_derivative_tensor(input);
         Tensor gradient_input(derivative.shape());
 
-        const float *src1 = derivative.data();
-        const float *src2 = error.data();
-        float *dst = gradient_input.data();
+        const double *src1 = derivative.data();
+        const double *src2 = error.data();
+        double *dst = gradient_input.data();
         for (size_t i = 0; i < derivative.size(); ++i)
         {
             dst[i] = src1[i] * src2[i];

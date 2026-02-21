@@ -4,7 +4,7 @@
 // #include "knowledge_logic.cpp"
 
 #define number_of_hinges 10
-#define epochs 1000
+#define epochs 5000
 #define learning_rate 0.01
 
 int main()
