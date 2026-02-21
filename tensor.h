@@ -16,7 +16,7 @@
 class Tensor
 {
 private:
-    std::vector<float> data_;     ///< Raw data storage
+    std::vector<double> data_;    ///< Raw data storage
     std::vector<size_t> shape_;   ///< Dimensions (e.g. shape_ = {32, 128, 768})
     std::vector<size_t> strides_; ///< Strides for each dimension (in elements)
 
@@ -55,7 +55,7 @@ public:
      * @param shape Tensor dimensions.
      * @param init_val Initial value for all elements.
      */
-    Tensor(const std::vector<size_t> &shape, float init_val = 0.0f);
+    Tensor(const std::vector<size_t> &shape, double init_val = 0.0);
 
     /**
      * @brief Copy constructor
@@ -128,14 +128,14 @@ public:
      * @param indices Index per dimension.
      * @return Reference to the element.
      */
-    float &operator()(const std::vector<size_t> &indices);
+    double &operator()(const std::vector<size_t> &indices);
 
     /**
      * @brief Access element by multidimensional indices (const).
      * @param indices Index per dimension.
      * @return Const reference to the element.
      */
-    const float &operator()(const std::vector<size_t> &indices) const;
+    const double &operator()(const std::vector<size_t> &indices) const;
 
     /**
      * @brief Access element in a 1D tensor.
@@ -143,7 +143,7 @@ public:
      * @return Reference to the element.
      * @throws std::invalid_argument If rank is not 1.
      */
-    float &operator()(size_t i);
+    double &operator()(size_t i);
 
     /**
      * @brief Access element in a 2D tensor.
@@ -152,7 +152,7 @@ public:
      * @return Reference to the element.
      * @throws std::invalid_argument If rank is not 2.
      */
-    float &operator()(size_t i, size_t j);
+    double &operator()(size_t i, size_t j);
 
     /**
      * @brief Access element in a 3D tensor.
@@ -162,7 +162,7 @@ public:
      * @return Reference to the element.
      * @throws std::invalid_argument If rank is not 3.
      */
-    float &operator()(size_t i, size_t j, size_t k);
+    double &operator()(size_t i, size_t j, size_t k);
 
     //----------Reshape and View Operations----------
 
@@ -180,19 +180,19 @@ public:
      * @brief Get a mutable pointer to the data buffer.
      * @return Pointer to data.
      */
-    float *data();
+    double *data();
 
     /**
      * @brief Get a const pointer to the data buffer.
      * @return Const pointer to data.
      */
-    const float *data() const;
+    const double *data() const;
 
     /**
      * @brief Fill all elements of the tensor with a constant value.
      * @param value The constant value to fill with.
      */
-    void fill(float value);
+    void fill(double value);
 
     //----------Arithmetic and Matrix Operations----------
 
@@ -233,28 +233,28 @@ public:
      * @param scalar The scalar value to add.
      * @return Reference to this tensor.
      */
-    Tensor &operator+=(float scalar);
+    Tensor &operator+=(double scalar);
 
     /**
      * @brief Scalar subtraction assignment.
      * @param scalar The scalar value to subtract.
      * @return Reference to this tensor.
      */
-    Tensor &operator-=(float scalar);
+    Tensor &operator-=(double scalar);
 
     /**
      * @brief Scalar multiplication assignment.
      * @param scalar The scalar value to multiply by.
      * @return Reference to this tensor.
      */
-    Tensor &operator*=(float scalar);
+    Tensor &operator*=(double scalar);
 
     /**
      * @brief Scalar division assignment.
      * @param scalar The scalar value to divide by.
      * @return Reference to this tensor.
      */
-    Tensor &operator/=(float scalar);
+    Tensor &operator/=(double scalar);
 
     //----------Stream Output (for Debugging)----------
 
@@ -319,7 +319,7 @@ Tensor operator/(const Tensor &a, const Tensor &b);
  * @param scalar Scalar value to add.
  * @return Result tensor.
  */
-Tensor operator+(const Tensor &t, float scalar);
+Tensor operator+(const Tensor &t, double scalar);
 
 /**
  * @brief Add scalar to tensor (element-wise).
@@ -327,7 +327,7 @@ Tensor operator+(const Tensor &t, float scalar);
  * @param t Input tensor.
  * @return Result tensor.
  */
-Tensor operator+(float scalar, const Tensor &t);
+Tensor operator+(double scalar, const Tensor &t);
 
 /**
  * @brief Subtract scalar from tensor (element-wise).
@@ -335,7 +335,7 @@ Tensor operator+(float scalar, const Tensor &t);
  * @param scalar Scalar value to subtract.
  * @return Result tensor.
  */
-Tensor operator-(const Tensor &t, float scalar);
+Tensor operator-(const Tensor &t, double scalar);
 
 /**
  * @brief Subtract tensor from scalar (element-wise).
@@ -343,7 +343,7 @@ Tensor operator-(const Tensor &t, float scalar);
  * @param t Input tensor.
  * @return Result tensor.
  */
-Tensor operator-(float scalar, const Tensor &t);
+Tensor operator-(double scalar, const Tensor &t);
 
 /**
  * @brief Multiply tensor by scalar (element-wise).
@@ -351,7 +351,7 @@ Tensor operator-(float scalar, const Tensor &t);
  * @param scalar Scalar multiplier.
  * @return Result tensor.
  */
-Tensor operator*(const Tensor &t, float scalar);
+Tensor operator*(const Tensor &t, double scalar);
 
 /**
  * @brief Multiply tensor by scalar (element-wise).
@@ -359,7 +359,7 @@ Tensor operator*(const Tensor &t, float scalar);
  * @param t Input tensor.
  * @return Result tensor.
  */
-Tensor operator*(float scalar, const Tensor &t);
+Tensor operator*(double scalar, const Tensor &t);
 
 /**
  * @brief Divide tensor by scalar (element-wise).
@@ -367,7 +367,7 @@ Tensor operator*(float scalar, const Tensor &t);
  * @param scalar Scalar divisor.
  * @return Result tensor.
  */
-Tensor operator/(const Tensor &t, float scalar);
+Tensor operator/(const Tensor &t, double scalar);
 
 /**
  * @brief Divide scalar by tensor (element-wise).
@@ -375,7 +375,7 @@ Tensor operator/(const Tensor &t, float scalar);
  * @param t Input tensor (denominator).
  * @return Result tensor.
  */
-Tensor operator/(float scalar, const Tensor &t);
+Tensor operator/(double scalar, const Tensor &t);
 
 /**
  * @brief Matrix multiply two 2D tensors.
@@ -399,6 +399,6 @@ Tensor transpose(const Tensor &A);
  * @param t Input tensor.
  * @return Sum of all elements.
  */
-float sum(const Tensor &t);
+double sum(const Tensor &t);
 
 #endif // TENSOR_H
