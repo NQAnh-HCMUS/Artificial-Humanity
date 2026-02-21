@@ -1,10 +1,5 @@
 #include "tensor.h"
-#include <algorithm>
-#include <numeric>
-#include <stdexcept>
 
-#include <iomanip>
-#include <limits>
 // Private helper methods
 
 void Tensor::compute_strides()
@@ -40,7 +35,7 @@ size_t Tensor::offset(const std::vector<size_t> &indices) const
 
 Tensor::Tensor() {}
 
-Tensor::Tensor(const std::vector<size_t> &shape, float init_val) : shape_(shape)
+Tensor::Tensor(const std::vector<size_t> &shape, double init_val) : shape_(shape)
 {
     size_t total = std::accumulate(shape.begin(), shape.end(), 1ull, std::multiplies<size_t>());
     data_.resize(total, init_val);
@@ -109,31 +104,31 @@ size_t Tensor::dim(size_t i) const
 
 //----------Element Access and Manipulation----------
 
-float &Tensor::operator()(const std::vector<size_t> &indices)
+double &Tensor::operator()(const std::vector<size_t> &indices)
 {
     return data_[offset(indices)];
 }
 
-const float &Tensor::operator()(const std::vector<size_t> &indices) const
+const double &Tensor::operator()(const std::vector<size_t> &indices) const
 {
     return data_[offset(indices)];
 }
 
-float &Tensor::operator()(size_t i)
+double &Tensor::operator()(size_t i)
 {
     if (shape_.size() != 1)
         throw std::invalid_argument("Index dimension mismatch");
     return data_[i];
 }
 
-float &Tensor::operator()(size_t i, size_t j)
+double &Tensor::operator()(size_t i, size_t j)
 {
     if (shape_.size() != 2)
         throw std::invalid_argument("Index dimension mismatch");
     return data_[i * strides_[0] + j];
 }
 
-float &Tensor::operator()(size_t i, size_t j, size_t k)
+double &Tensor::operator()(size_t i, size_t j, size_t k)
 {
     if (shape_.size() != 3)
         throw std::invalid_argument("Index dimension mismatch");
@@ -154,17 +149,17 @@ Tensor &Tensor::reshape(const std::vector<size_t> &new_shape)
 
 //----------Raw Data Access----------
 
-float *Tensor::data()
+double *Tensor::data()
 {
     return data_.data();
 }
 
-const float *Tensor::data() const
+const double *Tensor::data() const
 {
     return data_.data();
 }
 
-void Tensor::fill(float value)
+void Tensor::fill(double value)
 {
     std::fill(data_.begin(), data_.end(), value);
 }
@@ -203,28 +198,28 @@ Tensor &Tensor::operator/=(const Tensor &other)
     return *this;
 }
 
-Tensor &Tensor::operator+=(float scalar)
+Tensor &Tensor::operator+=(double scalar)
 {
     for (size_t i = 0; i < data_.size(); ++i)
         data_[i] += scalar;
     return *this;
 }
 
-Tensor &Tensor::operator-=(float scalar)
+Tensor &Tensor::operator-=(double scalar)
 {
     for (size_t i = 0; i < data_.size(); ++i)
         data_[i] -= scalar;
     return *this;
 }
 
-Tensor &Tensor::operator*=(float scalar)
+Tensor &Tensor::operator*=(double scalar)
 {
     for (size_t i = 0; i < data_.size(); ++i)
         data_[i] *= scalar;
     return *this;
 }
 
-Tensor &Tensor::operator/=(float scalar)
+Tensor &Tensor::operator/=(double scalar)
 {
     for (size_t i = 0; i < data_.size(); ++i)
         data_[i] /= scalar;
@@ -266,9 +261,9 @@ Tensor operator+(const Tensor &a, const Tensor &b)
 {
     check_shape_match(a, b);
     Tensor result(a.shape());
-    const float *a_data = a.data();
-    const float *b_data = b.data();
-    float *res_data = result.data();
+    const double *a_data = a.data();
+    const double *b_data = b.data();
+    double *res_data = result.data();
     for (size_t i = 0; i < a.size(); ++i)
         res_data[i] = a_data[i] + b_data[i];
     return result;
@@ -278,9 +273,9 @@ Tensor operator-(const Tensor &a, const Tensor &b)
 {
     check_shape_match(a, b);
     Tensor result(a.shape());
-    const float *a_data = a.data();
-    const float *b_data = b.data();
-    float *res_data = result.data();
+    const double *a_data = a.data();
+    const double *b_data = b.data();
+    double *res_data = result.data();
     for (size_t i = 0; i < a.size(); ++i)
         res_data[i] = a_data[i] - b_data[i];
     return result;
@@ -290,9 +285,9 @@ Tensor operator*(const Tensor &a, const Tensor &b)
 {
     check_shape_match(a, b);
     Tensor result(a.shape());
-    const float *a_data = a.data();
-    const float *b_data = b.data();
-    float *res_data = result.data();
+    const double *a_data = a.data();
+    const double *b_data = b.data();
+    double *res_data = result.data();
     for (size_t i = 0; i < a.size(); ++i)
         res_data[i] = a_data[i] * b_data[i];
     return result;
@@ -302,79 +297,79 @@ Tensor operator/(const Tensor &a, const Tensor &b)
 {
     check_shape_match(a, b);
     Tensor result(a.shape());
-    const float *a_data = a.data();
-    const float *b_data = b.data();
-    float *res_data = result.data();
+    const double *a_data = a.data();
+    const double *b_data = b.data();
+    double *res_data = result.data();
     for (size_t i = 0; i < a.size(); ++i)
         res_data[i] = a_data[i] / b_data[i];
     return result;
 }
 
-Tensor operator+(const Tensor &t, float scalar)
+Tensor operator+(const Tensor &t, double scalar)
 {
     Tensor result(t.shape());
-    const float *src = t.data();
-    float *dst = result.data();
+    const double *src = t.data();
+    double *dst = result.data();
     for (size_t i = 0; i < t.size(); ++i)
         dst[i] = src[i] + scalar;
     return result;
 }
 
-Tensor operator+(float scalar, const Tensor &t)
+Tensor operator+(double scalar, const Tensor &t)
 {
     return t + scalar;
 }
 
-Tensor operator-(const Tensor &t, float scalar)
+Tensor operator-(const Tensor &t, double scalar)
 {
     Tensor result(t.shape());
-    const float *src = t.data();
-    float *dst = result.data();
+    const double *src = t.data();
+    double *dst = result.data();
     for (size_t i = 0; i < t.size(); ++i)
         dst[i] = src[i] - scalar;
     return result;
 }
 
-Tensor operator-(float scalar, const Tensor &t)
+Tensor operator-(double scalar, const Tensor &t)
 {
     Tensor result(t.shape());
-    const float *src = t.data();
-    float *dst = result.data();
+    const double *src = t.data();
+    double *dst = result.data();
     for (size_t i = 0; i < t.size(); ++i)
         dst[i] = scalar - src[i];
     return result;
 }
 
-Tensor operator*(const Tensor &t, float scalar)
+Tensor operator*(const Tensor &t, double scalar)
 {
     Tensor result(t.shape());
-    const float *src = t.data();
-    float *dst = result.data();
+    const double *src = t.data();
+    double *dst = result.data();
     for (size_t i = 0; i < t.size(); ++i)
         dst[i] = src[i] * scalar;
     return result;
 }
 
-Tensor operator*(float scalar, const Tensor &t)
+Tensor operator*(double scalar, const Tensor &t)
 {
     return t * scalar;
 }
 
-Tensor operator/(const Tensor &t, float scalar)
+Tensor operator/(const Tensor &t, double scalar)
 {
     Tensor result(t.shape());
-    const float *src = t.data();
-    float *dst = result.data();
+    const double *src = t.data();
+    double *dst = result.data();
     for (size_t i = 0; i < t.size(); ++i)
         dst[i] = src[i] / scalar;
     return result;
 }
 
-Tensor operator/(float scalar, const Tensor &t)
+Tensor operator/(double scalar, const Tensor &t)
 {
     Tensor result(t.shape());
-    const float *src = t.data();
-    float *dst = result.data();
+    const double *src = t.data();
+    double *dst = result.data();
     for (size_t i = 0; i < t.size(); ++i)
         dst[i] = scalar / src[i];
     return result;
@@ -392,16 +387,16 @@ Tensor matmul(const Tensor &A, const Tensor &B)
     if (K != B.shape()[0])
         throw std::invalid_argument("Inner dimensions must match");
 
-    Tensor C({M, N}, 0.0f);
-    const float *a = A.data();
-    const float *b = B.data();
-    float *c = C.data();
+    Tensor C({M, N}, 0.0);
+    const double *a = A.data();
+    const double *b = B.data();
+    double *c = C.data();
 
     for (size_t i = 0; i < M; ++i)
     {
         for (size_t j = 0; j < N; ++j)
         {
-            float sum = 0.0f;
+            double sum = 0.0;
             for (size_t k = 0; k < K; ++k)
             {
                 sum += a[i * K + k] * b[k * N + j];
@@ -422,8 +417,8 @@ Tensor transpose(const Tensor &A)
 
     Tensor result({cols, rows});
 
-    const float *src = A.data();
-    float *dst = result.data();
+    const double *src = A.data();
+    double *dst = result.data();
 
     for (size_t i = 0; i < rows; ++i)
     {
@@ -436,7 +431,7 @@ Tensor transpose(const Tensor &A)
     return result;
 }
 
-float sum(const Tensor &t)
+double sum(const Tensor &t)
 {
-    return std::accumulate(t.data(), t.data() + t.size(), 0.0f);
+    return std::accumulate(t.data(), t.data() + t.size(), 0.0);
 }
