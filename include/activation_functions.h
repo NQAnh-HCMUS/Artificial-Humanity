@@ -1,55 +1,48 @@
 #ifndef ACTIVATION_FUNCTIONS_H
 #define ACTIVATION_FUNCTIONS_H
 
-// Activation Function Declarations
-// This header file contains declarations for various activation functions
-// used in neural networks. These functions allow neural networks to perform
-// non-linear transformations on input data.
-
 #include <iostream>
 #include <cmath>
 #include <vector>
 #include <algorithm>
 
 /**
- * The sigmoid function maps any real-valued number to a value between 0 and 1.
- * It is often used in the output layer of a neural network when the task is a
- * binary classification problem.
+ * Sigmoid function maps any real number to a 0 or 1, often used in the output layer of a neural network when the task is a binary classification problem.
  * @param x the input value
  * @return the output value of the sigmoid function
  */
 double sigmoid(double x);
 
 /**
- * @brief The derivative of the sigmoid function.
- * @param x the input value
- * @return the output value of the derivative of the sigmoid function
+ * @brief Derivative Sigmoid function
+ * @param x input
+ * @return derivative of sigmoid of input
  */
 double sigmoidDerivative(double x);
 
 /**
- * @brief A vectorized version of the sigmoid function.
+ * @brief Vectorized Sigmoid function.
  * @param x the input vector
  * @return a vector where each element is the sigmoid of the corresponding element in x
  */
 std::vector<double> vector_sigmoid(const std::vector<double> x);
 
 /**
- * @brief A vectorized version of the derivative of the sigmoid function.
+ * @brief Vectorized Derivative Sigmoid function.
  * @param x the input vector
  * @return a vector where each element is the derivative of the sigmoid of the corresponding element in x
  */
 std::vector<double> vector_sigmoid_derivative(const std::vector<double> x);
 
 /**
- * @brief The Rectified Linear Unit (ReLU) activation function.
+ * @brief Rectified Linear Unit (ReLU) activation function
  * @param x the input value
  * @return the output value of the ReLU function
  */
 double relu(double x);
 
 /**
- * @brief The derivative of the Rectified Linear Unit (ReLU) activation function.
+ * @brief Derivative of Rectified Linear Unit (ReLU) activation function.
  * @param x the input value
  * @return the output value of the derivative of the ReLU function
  */

@@ -1,4 +1,4 @@
-#include "math_functions.h"
+#include "../include/math_functions.h"
 #include <iostream>
 #include "tensor.cpp"
 

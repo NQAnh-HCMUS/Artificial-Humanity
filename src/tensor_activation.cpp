@@ -1,10 +1,5 @@
-#include "activation_functions.h"
-#include "tensor.h"
-
-double sigmoid(double x) { return 1 / (1 + exp(-x)); }
-
-double sigmoidDerivative(double x) { return exp(x) / pow((exp(x) + 1), 2); }
-
+#include "../include/activation_functions.h"
+#include "../include/tensor.h"
 
 Tensor sigmoidtensor(Tensor x)
 {
@@ -48,18 +43,6 @@ std::vector<Tensor> sigmoid_derivative_tensor_vector(const std::vector<Tensor> &
     result.reserve(tensors.size());
     for (const Tensor &t : tensors)
         result.push_back(sigmoid_derivative_tensor(t));
-    return result;
-}
-
-double relu(double x)
-{
-    double result = (x > 0) ? x : 0;
-    return result;
-}
-
-double reluDerivative(double x)
-{
-    double result = (x >= 0) ? 1 : 0;
     return result;
 }
 

@@ -2,7 +2,7 @@
 // #include <iostream>
 #include "activation_functions.cpp"
 #include "math_functions.cpp"
-// Base layer class
+
 /**
  * @brief Abstract base class for neural network layers.
  */

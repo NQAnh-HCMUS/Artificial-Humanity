@@ -1,5 +1,6 @@
 
-#include "math_functions.h"
+#include "../include/math_functions.h"
+#include "../include/tensor.h"
 
 /**
  * @brief Binary Cross Entropy loss function
@@ -18,7 +19,6 @@ double BCELossFunction(std::vector<double> true_label, std::vector<double> pred_
     }
     int size = true_label.size();
     double loss = -(1.0 / size) * sum;
-    // std::cout << "Binary Cross Entropy Loss(size=" << size << ") = " << loss << std::endl;
     return loss;
 }
 
@@ -39,6 +39,34 @@ std::vector<double> BCELossDerivative(const std::vector<double> &true_label,
     return d;
 }
 
+// double BCELossTensor(const Tensor &true_label, const Tensor &pred_prob)
+// {
+//     check_shape_match(true_label, pred_prob);
+
+//     double sum = 0.0;
+//     // Access the underlying flat data arrays
+//     const std::vector<double> true_data = true_label.data();
+//     std::vector<double> pred_data = pred_prob.data();
+
+//     for (size_t i = 0; i < true_label.size(); ++i)
+//     {
+//         sum += true_data[i] * log(pred_data[i]) + (1 - true_data[i]) * log((1 - pred_data[i]));
+//     }
+
+//     // Mean over all elements
+//     return -(sum / static_cast<double>(true_label.size()));
+// }
+
+// std::vector<double> BCETensorDerivative(const Tensor &true_label, const Tensor &pred_prob)
+// {
+//     std::vector<double> d(pred_prob.size());
+//     for (size_t i = 0; i < d.size(); ++i)
+//     {
+//         d[i] = (pred_prob.data()[i] - true_label.data()[i]) / (pred_prob.data()[i] * (1 - pred_prob.data()[i]) + 1e-8);
+//     }
+//     return d;
+// }
+
 /**
  * @brief Mean Squared Error loss function
  *
@@ -56,7 +84,6 @@ double MSELoss(std::vector<double> true_label, std::vector<double> pred)
     }
     int size = true_label.size();
     double loss = (1.0 / size) * sum;
-    // std::cout << "MSELoss(size=" << size << ") = " << loss << std::endl;
     return loss;
 }
 
@@ -69,6 +96,28 @@ std::vector<double> MSELossDerivative(std::vector<double> true_label, std::vecto
    */
     std::vector<double> sub = subtract(pred, true_label);
     std::vector<double> dev = scalarVectorMultiplication(sub, 2);
-    // std::cout << "MSELossDerivative(size=" << dev.size() << ") completed" << std::endl;
     return dev;
 }
+
+// double MSELoss(Tensor true_label, Tensor pred)
+// {
+//     // Ensure both tensors have the same number of elements
+//     if (true_label.size() != pred.size())
+//     {
+//         throw std::invalid_argument("MSELoss: true_label and pred must have the same number of elements");
+//     }
+
+//     double sum = 0.0;
+//     // Access the underlying flat data arrays
+//     std::vector<double> true_data = true_label.data();
+//     std::vector<double> pred_data = pred.data();
+
+//     for (size_t i = 0; i < true_label.size(); ++i)
+//     {
+//         double diff = true_data[i] - pred_data[i];
+//         sum += diff * diff; // equivalent to pow(diff, 2.0)
+//     }
+
+//     // Mean over all elements
+//     return sum / static_cast<double>(true_label.size());
+// }

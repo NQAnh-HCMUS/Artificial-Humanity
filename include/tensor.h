@@ -89,6 +89,7 @@ public:
     ~Tensor() = default;
 
     //----------Tensor Element Queries----------
+
     /**
      * @brief Get tensor shape
      * @return Reference to the shape vector.

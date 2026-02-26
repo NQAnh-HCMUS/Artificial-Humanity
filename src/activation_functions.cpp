@@ -1,4 +1,4 @@
-#include "activation_functions.h"
+#include "../include/activation_functions.h"
 
 double sigmoid(double x)
 {

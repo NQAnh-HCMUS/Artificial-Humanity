@@ -1,8 +1,6 @@
 #include <vector>
-// #include <iostream>
-#include "tensor_activation.cpp"
-#include "math_functions.h"
-#include "tensor.h"
+#include "../src/tensor_activation.cpp"
+#include "../include/math_functions.h"
 
 // Base layer class
 /**
@@ -27,7 +25,7 @@ public:
      * @param learning_rate scalar learning rate used for parameter updates
      * @return gradient of the loss with respect to the layer input
      */
-    virtual Tensor backward(Tensor error, Tensor learning_rate) = 0;
+    virtual Tensor backward(Tensor error, double learning_rate) = 0;
 };
 
 /**
@@ -55,7 +53,7 @@ public:
      * @param learning_rate unused (no trainable parameters)
      * @return gradient with respect to the layer input
      */
-    Tensor backward(Tensor error, Tensor learning_rate) override
+    Tensor backward(Tensor error, double learning_rate) override
     {
         Tensor derivative = sigmoid_derivative_tensor(input);
         Tensor gradient_input(derivative.shape());

@@ -1,4 +1,4 @@
-#include "tensor.h"
+#include "../include/tensor.h"
 
 // Private helper methods
 
