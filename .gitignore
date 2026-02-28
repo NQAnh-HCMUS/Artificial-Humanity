@@ -57,3 +57,7 @@ dkms.conf
 .gitignore
 .vs/VSWorkspaceState.json
 .vs/Artificial-Humanity.slnx/v18/.wsuo
+
+# Documents
+doc/*
+!doc/main.pdf

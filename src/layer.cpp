@@ -18,14 +18,14 @@ std::vector<double> Sigmoid::backward(std::vector<double> error, double learning
     return gradient_input;
 }
 
-std::vector<double> Relu::forward(const std::vector<double> input_data)
+std::vector<double> ReLu::forward(const std::vector<double> input_data)
 {
     input = input_data;
     output = vector_relu(input);
     return output;
 }
 
-std::vector<double> Relu::backward(std::vector<double> error, double learning_rate)
+std::vector<double> ReLu::backward(std::vector<double> error, double learning_rate)
 {
     std::vector<double> derivative = vector_relu_derivative(input);
     std::vector<double> grad_input;

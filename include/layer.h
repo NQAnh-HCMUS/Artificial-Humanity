@@ -51,8 +51,8 @@ public:
     std::vector<double> backward(std::vector<double> error, double learning_rate) override;
 };
 
-// Define Relu class inherited from Layer
-class Relu : public Layer
+// Define ReLu class inherited from Layer
+class ReLu : public Layer
 {
 public:
     std::vector<double> forward(const std::vector<double> input_data) override;
