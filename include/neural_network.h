@@ -2,8 +2,8 @@
 #include <memory>
 #include <iostream>
 #include "../src/layer.cpp"
+// #include "../include/layer.h"
 #include "../src/loss_function.cpp"
-#include "../src/tensor_layer.cpp"
 
 class neural_network
 {

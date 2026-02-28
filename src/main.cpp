@@ -1,7 +1,7 @@
 // #include "../include/neural_network.h"
 #include "neural_network.cpp"
 
-#define number_of_hinges 10
+#define number_of_hinges 3
 #define epochs 5000
 #define learning_rate 0.01
 
@@ -11,13 +11,18 @@ int main()
     neural_network neural_network;
 
     // Add layers to the network
+    // neural_network.add(std::make_unique<Linear>(2, number_of_hinges));
+    // neural_network.add(std::make_unique<APL>(number_of_hinges));
+    // neural_network.add(std::make_unique<Linear>(number_of_hinges, number_of_hinges));
+    // neural_network.add(std::make_unique<APL>(number_of_hinges));
+    // neural_network.add(std::make_unique<Linear>(number_of_hinges, 1));
+    // neural_network.add(std::make_unique<Sigmoid>());
     neural_network.add(std::make_unique<Linear>(2, number_of_hinges));
-    neural_network.add(std::make_unique<APL>(number_of_hinges));
+    neural_network.add(std::make_unique<Relu>());
     neural_network.add(std::make_unique<Linear>(number_of_hinges, number_of_hinges));
-    neural_network.add(std::make_unique<APL>(number_of_hinges));
+    neural_network.add(std::make_unique<Relu>());
     neural_network.add(std::make_unique<Linear>(number_of_hinges, 1));
     neural_network.add(std::make_unique<Sigmoid>());
-
     // Example input data: XOR logic gate
     std::vector<std::vector<double>> X_train = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
     std::vector<std::vector<double>> y_train = {{0}, {0}, {0}, {1}};

@@ -1,9 +1,4 @@
-// #include <vector>
-// #include <memory>
-// #include <iostream>
-// #include "../src/layer.cpp"
-// #include "../src/loss_function.cpp"
-// #include "../src/tensor_layer.cpp"
+
 #include "../include/neural_network.h"
 
 void neural_network::add(std::unique_ptr<Layer> layer)

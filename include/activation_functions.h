@@ -41,12 +41,16 @@ std::vector<double> vector_sigmoid_derivative(const std::vector<double> x);
  */
 double relu(double x);
 
+std::vector<double> vector_relu(const std::vector<double> &x);
+
 /**
  * @brief Derivative of Rectified Linear Unit (ReLU) activation function.
  * @param x the input value
  * @return the output value of the derivative of the ReLU function
  */
 double reluDerivative(double x);
+
+std::vector<double> vector_relu_derivative(const std::vector<double> &x);
 
 // APL: Adaptive Piecewise Linear
 /**
