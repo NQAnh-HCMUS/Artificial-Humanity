@@ -5,7 +5,9 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
-#include "../include/tensor.h"
+#include "../include/math_functions.h"
+
+//----------SIGMOID----------
 
 /**
  * Sigmoid function maps any real number to a 0 or 1, often used in the output layer of a neural network when the task is a binary classification problem.
@@ -43,14 +45,14 @@ std::vector<Tensor> sigmoid_tensor_vector(const std::vector<Tensor> &tensors);
 
 std::vector<Tensor> sigmoid_derivative_tensor_vector(const std::vector<Tensor> &tensors);
 
+//----------RELU----------
+
 /**
  * @brief Rectified Linear Unit (ReLU) activation function
  * @param x the input value
  * @return the output value of the ReLU function
  */
 double relu(double x);
-
-std::vector<double> vector_relu(const std::vector<double> &x);
 
 /**
  * @brief Derivative of Rectified Linear Unit (ReLU) activation function.
@@ -59,24 +61,35 @@ std::vector<double> vector_relu(const std::vector<double> &x);
  */
 double reluDerivative(double x);
 
+std::vector<double> vector_relu(const std::vector<double> &x);
+
 std::vector<double> vector_relu_derivative(const std::vector<double> &x);
 
-// APL: Adaptive Piecewise Linear
+Tensor relutensor(Tensor x);
+
+Tensor relu_derivative_tensor(Tensor x);
+
+std::vector<Tensor> relu_tensor_vector(const std::vector<Tensor> &tensors);
+
+std::vector<Tensor> relu_derivative_tensor_vector(const std::vector<Tensor> &tensors);
+
+//----------APL----------
+
 /**
- * @brief The Adaptive Piecewise Linear (APL) activation function.
- * @param x the input value
- * @param a the learned slope parameters for each hinge
- * @param b the learned shift parameters for each hinge
- * @return the output value of the APL function
+ * @brief Adaptive Piecewise Linear (APL) activation function.
+ * @param x input value
+ * @param a learned slope parameters for each hinge
+ * @param b learned shift parameters for each hinge
+ * @return output value of the APL function
  */
 double apl(double x, const std::vector<double> &a, const std::vector<double> &b);
 
 /**
- * @brief The derivative of the Adaptive Piecewise Linear (APL) activation function.
- * @param x the input value
- * @param a the learned slope parameters for each hinge
- * @param b the learned shift parameters for each hinge
- * @return the output value of the derivative of the APL function
+ * @brief Derivative of Adaptive Piecewise Linear (APL) activation function.
+ * @param x input value
+ * @param a learned slope parameters for each hinge
+ * @param b learned shift parameters for each hinge
+ * @return output value of the derivative of the APL function
  */
 double apl_derivative(double x, const std::vector<double> &a, const std::vector<double> &b);
 

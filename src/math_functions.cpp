@@ -1,6 +1,13 @@
 #include "../include/math_functions.h"
-#include <iostream>
 #include "tensor.cpp"
+
+double randomDouble(double min, double max)
+{
+    static std::random_device rd;
+    static std::mt19937 gen(rd() ^ std::chrono::system_clock::now().time_since_epoch().count());
+    std::uniform_real_distribution<> dis(min, max);
+    return dis(gen);
+}
 
 double dotProduct(std::vector<double> &vector1, std::vector<double> &vector2)
 {
@@ -9,14 +16,12 @@ double dotProduct(std::vector<double> &vector1, std::vector<double> &vector2)
     {
         result += vector1[i] * vector2[i];
     }
-    // std::cout << "dotProduct result  = " << result << std::endl;
     return result;
 }
 
 std::vector<double> scalarVectorMultiplication(std::vector<double> &vector, double scalar)
 {
     std::transform(vector.begin(), vector.end(), vector.begin(), std::bind(std::multiplies<double>(), std::placeholders::_1, scalar));
-    // std::cout << "scalarVectorMultiplication(scalar=" << scalar << ") completed" << std::endl;
     return vector;
 }
 
@@ -24,7 +29,6 @@ std::vector<double> subtract(std::vector<double> &vector1, std::vector<double> &
 {
     std::vector<double> out;
     std::transform(vector1.begin(), vector1.end(), vector2.begin(), std::back_inserter(out), std::minus<double>());
-    // std::cout << "vector1 subtracted by vector2 " << std::endl;
     return out;
 }
 
@@ -41,17 +45,11 @@ std::vector<std::vector<double>> transpose(std::vector<std::vector<double>> &mat
             trans_vec[j][i] = matrix[i][j];
         }
     }
-    // std::cout << "transpose completed: " << matrix.size() << "x" << matrix[0].size() << " -> " << trans_vec.size() << "x" << trans_vec[0].size() << std::endl;
     return trans_vec;
 }
 
 std::vector<std::vector<double>> uniformWeightInitializer(int rows, int cols)
 {
-    // Random number generation setup
-    std::random_device rd;
-    std::mt19937 gen(rd() ^ std::chrono::system_clock::now().time_since_epoch().count());
-    std::uniform_real_distribution<> dis(-1.0, 1.0);
-
     // Initialize weights matrix
     std::vector<std::vector<double>> weights(rows, std::vector<double>(cols));
 
@@ -59,7 +57,7 @@ std::vector<std::vector<double>> uniformWeightInitializer(int rows, int cols)
     {
         for (int j = 0; j < cols; ++j)
         {
-            weights[i][j] = dis(gen);
+            weights[i][j] = randomDouble(-1.0, 1.0);
         }
     }
 
@@ -97,9 +95,8 @@ std::vector<double> biasInitailizer(int size)
 
     for (int i = 0; i < size; ++i)
     {
-        bias[i] = dis(gen);
+        bias[i] = randomDouble(-1.0, 1.0);
     }
-    // std::cout << "uniform random bias vector (" << size << ") initialized" << std::endl;
     return bias;
 }
 

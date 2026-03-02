@@ -1,7 +1,5 @@
 #include "../include/tensor.h"
 
-// Private helper methods
-
 void Tensor::compute_strides()
 {
     strides_.resize(shape_.size());
@@ -34,6 +32,7 @@ size_t Tensor::offset(const std::vector<size_t> &indices) const
 //----------Constructors and Destructor----------
 
 Tensor::Tensor() {}
+// Tensor::Tensor() = default;
 
 Tensor::Tensor(const std::vector<size_t> &shape, double init_val) : shape_(shape)
 {

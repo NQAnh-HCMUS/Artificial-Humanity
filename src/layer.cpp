@@ -2,6 +2,7 @@
 
 std::vector<double> Sigmoid::forward(const std::vector<double> input_data)
 {
+
     input = input_data;
     output = vector_sigmoid(input);
     return output;
@@ -151,4 +152,48 @@ std::vector<double> Linear::backward(std::vector<double> error, double learning_
         weights[i] = subtract(weights[i], delta_weight);
     }
     return input_error;
+}
+
+Tensor TensorSigmoid::forward(const Tensor &input_data)
+{
+    input = input_data;
+    output = sigmoid_tensor(input);
+    return output;
+}
+
+Tensor TensorSigmoid::backward(Tensor error, double learning_rate)
+{
+    Tensor derivative = sigmoid_derivative_tensor(input);
+
+    std::vector<double> grad_input;
+    for (size_t i = 0; i < derivative.size(); ++i)
+    {
+        grad_input.push_back(derivative.data()[i] * error.data()[i]);
+    }
+
+    Tensor gradient_input(derivative.shape());
+    gradient_input.set_data(grad_input);
+    return gradient_input;
+}
+
+Tensor TensorReLu::forward(const Tensor &input_data)
+{
+    input = input_data;
+    output = relutensor(input);
+    return output;
+}
+
+Tensor TensorReLu::backward(Tensor error, double learning_rate)
+{
+    Tensor derivative = relu_derivative_tensor(input);
+
+    std::vector<double> grad_input;
+    for (size_t i = 0; i < derivative.size(); ++i)
+    {
+        grad_input.push_back(derivative.data()[i] * error.data()[i]);
+    }
+
+    Tensor gradient_input(derivative.shape());
+    gradient_input.set_data(grad_input);
+    return gradient_input;
 }

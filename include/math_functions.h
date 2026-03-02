@@ -11,6 +11,17 @@
 #include <math.h>
 #include <cmath>
 #include <chrono>
+#include <numeric>
+#include "../include/tensor.h"
+
+/**
+ * @brief Generate a random double between
+ * @param min
+ * @param max
+ * @return random double
+ */
+double randomDouble(double min, double max);
+
 /**
  * @brief Computes the dot product of two vectors
  * @param[in] vector1 The first vector

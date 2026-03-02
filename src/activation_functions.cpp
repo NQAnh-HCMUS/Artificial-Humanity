@@ -1,5 +1,4 @@
 #include "../include/activation_functions.h"
-#include "../include/tensor.h"
 
 //----------SIGMOID----------
 
@@ -73,18 +72,18 @@ double relu(double x)
     return result;
 }
 
+double reluDerivative(double x)
+{
+    double result = (x >= 0) ? 1 : 0;
+    return result;
+}
+
 std::vector<double> vector_relu(const std::vector<double> &x)
 {
     std::vector<double> result;
     result.reserve(x.size());
     for (double val : x)
         result.push_back(relu(val));
-    return result;
-}
-
-double reluDerivative(double x)
-{
-    double result = (x >= 0) ? 1 : 0;
     return result;
 }
 

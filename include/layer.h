@@ -2,6 +2,7 @@
 #define LAYER_H
 
 #include "../src/activation_functions.cpp"
+// #include "../include/activation_functions.h"
 #include "../src/math_functions.cpp"
 #include "../include/tensor.h"
 
@@ -179,58 +180,23 @@ public:
      * @param input_data input vector
      * @return vector of sigmoid activations
      */
-    Tensor forward(const Tensor &input_data) override
-    {
-        input = input_data;
-        output = sigmoid_tensor(input);
-        return output;
-    }
+    Tensor forward(const Tensor &input_data) override;
+
     /**
      * @brief Backpropagate through the sigmoid nonlinearity.
      * @param error gradient at the layer output
      * @param learning_rate unused (no trainable parameters)
      * @return gradient with respect to the layer input
      */
-    Tensor backward(Tensor error, double learning_rate) override
-    {
-        Tensor derivative = sigmoid_derivative_tensor(input);
-        Tensor gradient_input(derivative.shape());
-
-        const double *src1 = derivative.data();
-        const double *src2 = error.data();
-        double *dst = gradient_input.data();
-        for (size_t i = 0; i < derivative.size(); ++i)
-        {
-            dst[i] = src1[i] * src2[i];
-        }
-        return gradient_input;
-    }
+    Tensor backward(Tensor error, double learning_rate) override;
 };
 
-// class TensorReLu : public TensorLayer
-// {
-// public:
-//     Tensor forward(const Tensor &input_data) override
-//     {
-//         input = input_data;
-//         output = relutensor(input);
-//         return output;
-//     }
+class TensorReLu : public TensorLayer
+{
+public:
+    Tensor forward(const Tensor &input_data) override;
 
-//     Tensor backward(Tensor error, double learning_rate) override
-//     {
-//         Tensor derivative = relu_derivative_tensor(input);
-//         Tensor gradient_input(derivative.shape());
-
-//         const double *src1 = derivative.data();
-//         const double *src2 = error.data();
-//         double *dst = gradient_input.data();
-//         for (size_t i = 0; i < derivative.size(); ++i)
-//         {
-//             dst[i] = src1[i] * src2[i];
-//         }
-//         return gradient_input;
-//     }
-// };
+    Tensor backward(Tensor error, double learning_rate) override;
+};
 
 #endif // LAYER_H
