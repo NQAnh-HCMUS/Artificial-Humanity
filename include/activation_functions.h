@@ -5,6 +5,7 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
+#include "../include/tensor.h"
 
 /**
  * Sigmoid function maps any real number to a 0 or 1, often used in the output layer of a neural network when the task is a binary classification problem.
@@ -33,6 +34,14 @@ std::vector<double> vector_sigmoid(const std::vector<double> x);
  * @return a vector where each element is the derivative of the sigmoid of the corresponding element in x
  */
 std::vector<double> vector_sigmoid_derivative(const std::vector<double> x);
+
+Tensor sigmoid_tensor(Tensor x);
+
+Tensor sigmoid_derivative_tensor(Tensor x);
+
+std::vector<Tensor> sigmoid_tensor_vector(const std::vector<Tensor> &tensors);
+
+std::vector<Tensor> sigmoid_derivative_tensor_vector(const std::vector<Tensor> &tensors);
 
 /**
  * @brief Rectified Linear Unit (ReLU) activation function

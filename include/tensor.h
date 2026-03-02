@@ -10,9 +10,6 @@
 #include <iomanip>
 #include <limits>
 
-/**
- * @brief Simple dense tensor with row-major storage.
- */
 class Tensor
 {
 private:
@@ -88,7 +85,20 @@ public:
      */
     ~Tensor() = default;
 
-    //----------Tensor Element Queries----------
+    //----------Tensor Get & Set----------
+
+    /**
+     * @brief Get tensor data
+     *
+     * @return 1D vector of data in row-major order
+     */
+    std::vector<double> get_data() const;
+
+    /**
+     * @brief Set data.
+     * @param data The data to set.
+     */
+    void set_data(const std::vector<double> &data);
 
     /**
      * @brief Get tensor shape
@@ -97,10 +107,24 @@ public:
     const std::vector<size_t> &shape() const;
 
     /**
+     * @brief Set tensor shape (size remains)
+     * @param shape New shape
+     * @throws std::invalid_argument If total element count changes.
+     */
+    void set_shape(const std::vector<size_t> &shape);
+
+    /**
      * @brief Get tensor strides
      * @return Reference to the strides vector.
      */
     const std::vector<size_t> &strides() const;
+
+    /**
+     * @brief  Set tensor strides (shape remains)
+     * @param strides New strides
+     * @throws std::invalid_argument If strides size does not match shape size.
+     */
+    void set_strides(const std::vector<size_t> &strides);
 
     /**
      * @brief Get number of dimensions

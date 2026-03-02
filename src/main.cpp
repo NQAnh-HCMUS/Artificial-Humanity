@@ -23,6 +23,7 @@ int main()
     neural_network.add(std::make_unique<ReLu>());
     neural_network.add(std::make_unique<Linear>(number_of_hinges, 1));
     neural_network.add(std::make_unique<Sigmoid>());
+
     // Example input data: XOR logic gate
     std::vector<std::vector<double>> X_train = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
     std::vector<std::vector<double>> y_train = {{0}, {0}, {0}, {1}};

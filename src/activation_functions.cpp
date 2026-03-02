@@ -1,6 +1,8 @@
 #include "../include/activation_functions.h"
 #include "../include/tensor.h"
 
+//----------SIGMOID----------
+
 double sigmoid(double x)
 {
     double result = 1 / (1 + exp(-x));
@@ -31,6 +33,40 @@ std::vector<double> vector_sigmoid_derivative(const std::vector<double> x)
     return result;
 }
 
+Tensor sigmoid_tensor(Tensor x)
+{
+    Tensor result(x.shape());
+    result.set_data(vector_sigmoid(x.get_data()));
+    return result;
+}
+
+Tensor sigmoid_derivative_tensor(Tensor x)
+{
+    Tensor result(x.shape());
+    result.set_data(vector_sigmoid_derivative(x.get_data()));
+    return result;
+}
+
+std::vector<Tensor> sigmoid_tensor_vector(const std::vector<Tensor> &tensors)
+{
+    std::vector<Tensor> result;
+    result.reserve(tensors.size());
+    for (const Tensor &t : tensors)
+        result.push_back(sigmoid_tensor(t));
+    return result;
+}
+
+std::vector<Tensor> sigmoid_derivative_tensor_vector(const std::vector<Tensor> &tensors)
+{
+    std::vector<Tensor> result;
+    result.reserve(tensors.size());
+    for (const Tensor &t : tensors)
+        result.push_back(sigmoid_derivative_tensor(t));
+    return result;
+}
+
+//----------RELU----------
+
 double relu(double x)
 {
     double result = (x > 0) ? x : 0;
@@ -60,6 +96,40 @@ std::vector<double> vector_relu_derivative(const std::vector<double> &x)
         result.push_back(reluDerivative(val));
     return result;
 }
+
+Tensor relutensor(Tensor x)
+{
+    Tensor result(x.shape());
+    result.set_data(vector_relu(x.get_data()));
+    return result;
+}
+
+Tensor relu_derivative_tensor(Tensor x)
+{
+    Tensor result(x.shape());
+    result.set_data(vector_relu_derivative(x.get_data()));
+    return result;
+}
+
+std::vector<Tensor> relu_tensor_vector(const std::vector<Tensor> &tensors)
+{
+    std::vector<Tensor> result;
+    result.reserve(tensors.size());
+    for (const Tensor &t : tensors)
+        result.push_back(relutensor(t));
+    return result;
+}
+
+std::vector<Tensor> relu_derivative_tensor_vector(const std::vector<Tensor> &tensors)
+{
+    std::vector<Tensor> result;
+    result.reserve(tensors.size());
+    for (const Tensor &t : tensors)
+        result.push_back(relu_derivative_tensor(t));
+    return result;
+}
+
+//----------APL----------
 
 double apl(double x, const std::vector<double> &a, const std::vector<double> &b)
 {
@@ -100,60 +170,5 @@ std::vector<double> vector_apl_derivative(const std::vector<double> &x, const st
     result.reserve(x.size());
     for (double val : x)
         result.push_back(apl_derivative(val, a, b));
-    return result;
-}
-
-Tensor sigmoidtensor(Tensor x)
-{
-    // Clone tensor shape
-    Tensor result(x.shape());
-
-    // Get raw data pointers
-    const double *input_data = x.data();
-    double *output_data = result.data();
-
-    // Apply element-wise
-    for (size_t i = 0; i < x.size(); ++i)
-        output_data[i] = sigmoid(input_data[i]);
-    return result;
-}
-
-Tensor sigmoid_derivative_tensor(Tensor x)
-{
-    Tensor result(x.shape());
-
-    const double *src = x.data();
-    double *dst = result.data();
-
-    for (size_t i = 0; i < x.size(); ++i)
-        dst[i] = sigmoidDerivative(src[i]);
-    return result;
-}
-
-std::vector<Tensor> sigmoid_tensor_vector(const std::vector<Tensor> &tensors)
-{
-    std::vector<Tensor> result;
-    result.reserve(tensors.size());
-    for (const Tensor &t : tensors)
-        result.push_back(sigmoidtensor(t));
-    return result;
-}
-
-std::vector<Tensor> sigmoid_derivative_tensor_vector(const std::vector<Tensor> &tensors)
-{
-    std::vector<Tensor> result;
-    result.reserve(tensors.size());
-    for (const Tensor &t : tensors)
-        result.push_back(sigmoid_derivative_tensor(t));
-    return result;
-}
-
-Tensor relutensor(Tensor x)
-{
-    Tensor result(x.shape());
-    const double *src = x.data();
-    double *dst = result.data();
-    for (size_t i = 0; i < x.size(); ++i)
-        dst[i] = relu(src[i]);
     return result;
 }

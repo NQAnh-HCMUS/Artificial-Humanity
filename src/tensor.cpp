@@ -77,14 +77,52 @@ Tensor &Tensor::operator=(Tensor &&other) noexcept
 
 //----------Tensor Element Queries----------
 
+double *Tensor::data()
+{
+    return data_.data();
+}
+
+const double *Tensor::data() const
+{
+    return data_.data();
+}
+
+std::vector<double> Tensor::get_data() const
+{
+    return data_;
+}
+
+void Tensor::set_data(const std::vector<double> &data)
+{
+    if (data.size() != size())
+        throw std::invalid_argument("Data size does not match tensor size");
+    data_ = data;
+}
+
 const std::vector<size_t> &Tensor::shape() const
 {
     return shape_;
 }
 
+void Tensor::set_shape(const std::vector<size_t> &shape)
+{
+    size_t new_total = std::accumulate(shape.begin(), shape.end(), 1ull, std::multiplies<size_t>());
+    if (new_total != size())
+        throw std::invalid_argument("Total size must remain unchanged for reshape");
+    shape_ = shape;
+    compute_strides();
+}
+
 const std::vector<size_t> &Tensor::strides() const
 {
     return strides_;
+}
+
+void Tensor::set_strides(const std::vector<size_t> &strides)
+{
+    if (strides.size() != shape_.size())
+        throw std::invalid_argument("Strides size must match shape size");
+    strides_ = strides;
 }
 
 size_t Tensor::ndim() const
@@ -148,16 +186,6 @@ Tensor &Tensor::reshape(const std::vector<size_t> &new_shape)
 }
 
 //----------Raw Data Access----------
-
-double *Tensor::data()
-{
-    return data_.data();
-}
-
-const double *Tensor::data() const
-{
-    return data_.data();
-}
 
 void Tensor::fill(double value)
 {
